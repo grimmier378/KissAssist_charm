@@ -10,6 +10,7 @@ everything follows the same proceedures as KissAssist http://kissassist.com
 Major Changes from Kissassist are:
   * Dropping MQ2TWIST for MQ2Medley, this causes much less headaches on a bard.
   * Adding in Charming for Druid, Enchanter, Necro, and Bards.
+
 New Config Settings:
   * CharmOn=0 off, 1 on
   * CharmSpell=Your Charm Spell or Ability
@@ -17,6 +18,7 @@ New Config Settings:
   * CharmMaxLevel=Mob Max level to try charming
   * CharmRadius=50
   * CharmKeep=0 off, 1 on "Will attempt to keep the same pet after breaks"
+
 New Commands:
   * /charmon    ---Toggles on | off charming
   * /charmkeep  ---Toggles on | off trying to keep the same pet
