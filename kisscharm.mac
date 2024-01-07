@@ -129,7 +129,7 @@
 #Event KTInvite          "[MQ2] KTInvite #1#"
 #Event KTSay             "[MQ2] KTSay #1# #2#"
 #Event KTTarget          "[MQ2] KTTarget #1#"
-#Event CharmBackO	 	 "#*#Charm Sucessfull#*#"
+|#Event CharmBackO	 	 "#*#Charm Sucessfull#*#"
 #Event LeftGroup         "#1# has left the group."
 #Event MezBroke          "#1# has been awakened by #2#."
 |#Event CharmBroke        "Your #1# spell has worn off of #2#."
@@ -6425,9 +6425,10 @@ Sub Main
 					/call LoadIni Pet CharmKeep 			   int 			0
 					/if (!${Defined[CharmAEClosest]}) /declare CharmAEClosest                   int         outer 0
 					/if (!${Defined[CharmCount]}) /declare CharmCount[13]                   int         outer 0
+
 					| This loads and declares the CharmImmune var
 					/call LoadIni "${ZoneName}" CharmImmune   string      "List up to 10 mobs. Use full names i.e. a green snake,a blue tiger,a wide eye ooze or NULL" NULL ${InfoFileName}
-					/if (${CharmOn}) /call CreateTimersCharm
+					/call CreateTimersCharm
 						|KissAssist_Info variables
 						/if (!${CharmImmune.Find[null]} && ${CharmImmune.Length}>0) {
 							/squelch /alert clear 4
@@ -7923,7 +7924,6 @@ Sub Main
             /declare castReturn             string      outer       CAST_CANCELLED
             /declare CheckResisted          int         outer       0
             /declare ChainPullTemp          string      outer
-            /declare CharmAETimer             timer       outer       0
             /declare CharmArray[50,3]         string      outer       NULL
             /declare CharmBroke               int         outer       0
             /declare CharmImmuneIDs           string      outer
