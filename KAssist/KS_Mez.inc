@@ -184,10 +184,14 @@
                 /call RemoveFromArray MezArray ${i}
                 /continue
             }
+            /if (${IAmABard}) {
+                /attack off
+            }
             DEBUGMEZ MezTimer ${i} ${MezTimer${i}} ${Spawn[${MezArray[${i},1]}].ID}
             /if (${Select[${MezOn},1,2]}) {
                 /doevent AttackCalled
                 /if (${CalledTargetID}) {
+                     DEBUGMEZ "--> Checking target before turning on attack!! <--"
                     /call CombatTargetCheck 0
                     /if (${MyTargetID}==${MezArray[${i},1]}) /continue
                 }
@@ -202,22 +206,24 @@
                     /call MezMobsAE ${MezAEClosest}
                     /varcalc i ${i}-1
                 }
-				}
-            }
+			}
+        }
         /next i
         /if (!${Target.ID} || ${Target.ID}!=${MyTargetID}) {
-            /if (${mezCombat}) /call CombatTargetCheck 1
-        }   
-			|} else /if (${IAmABard} && ${MeleeTwistOn} && ${CombatStart}) {
-               | /call CombatTargetCheck 1
-            |}
-        
-			|-> Do we want to Charm stuff? if So call CharmStuff after mezzing *its safer that way*
+            /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Mezzed}]}) {
+               | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
+                /call CombatTargetCheck1 1
+              /if (${MedleyOn}) /squelch /medley
+            } else {
+                /if (${mezCombat}) /call CombatTargetCheck 1
+            }	|-> Do we want to Charm stuff? if So call CharmStuff after mezzing *its safer that way*
+        }
 		/if (${CharmOn}==1 && !${Me.Pet.ID}) {
 			/call DoCharmStuff DoMezStuff
 		}
 		DEBUGMEZ DoMezStuff: Leave
     /return
+    
 | -------------------------------------------------------------------------------------
 | SUB: Mez Mobs AE
 | -------------------------------------------------------------------------------------
@@ -426,4 +432,3 @@
             /next l
         }
     /return
-me
