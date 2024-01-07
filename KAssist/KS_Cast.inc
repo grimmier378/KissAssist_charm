@@ -213,7 +213,7 @@
         /varset IAMCastingID ${Me.AltAbility[${WhatAA}].Spell.ID}        
         /if (${IAmABard}) {
             |/squelch /stopsong
-            /echo DEBUGMD casting then waiting /medley queue "${WhatAA}"
+            |DEBUGMD casting then waiting /medley queue "${WhatAA}"
             /if (${Me.AltAbility[${WhatAA}].Spell.CastTime}>0) {
                 /squelch /multiline ; /stopsong; /medley queue "${WhatAA}" -interrupt
                 /echo "/squelch /medley queue ${WhatAA}"
@@ -286,10 +286,10 @@
             /if (${ItemCastTime}>0) {
                 | TODO pause remove
                 |/call CastBardCheck 0
-                /echo DEBUGMD casting then waiting /medley queue "${WhatItem}"
+                |DEBUGMD casting then waiting /medley queue "${WhatItem}"
                 /squelch /medley queue "${WhatItem}"
                 /delay 60 ${Medley.TTQE}==0.0
-                /echo DEBUGMD delay over
+                |DEBUGMD delay over
             } else {
                 /useitem "${WhatItem}" 
             }
@@ -413,7 +413,7 @@
            /return CAST_NO_RESULT
         }
         /if (${IAmABard}) {
-            /echo DEBUGMD casting then waiting /medley queue "${WhatSpell}"
+            |DEBUGMD casting then waiting /medley queue "${WhatSpell}"
             /if (${sentFrom.Equal[MezMobs]} || ${sentFrom.Equal[CharmMobs]}) { 
                 /squelch /medley queue "${WhatSpell}" -targetid|${WhatID} -interrupt
                 |/echo "MEDLEY::CAST /medley queue "${WhatSpell}" -targetid|${WhatID} -interrupt"
@@ -422,7 +422,7 @@
             }
             | TODO calculate better max wait
             /delay 30 ${Medley.TTQE}==0.0
-            /echo DEBUGMD delay over
+            |DEBUGMD delay over
             /call DoCastingEvents 5 0
             /return ${castReturn}
         }

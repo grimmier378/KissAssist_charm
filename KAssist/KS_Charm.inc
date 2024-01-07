@@ -68,7 +68,7 @@
             /varset CharmMobDone 1
             /return
         }
-		|/if (${CharmKeep}==1) /echo ${CharmPet}
+		/if (${CharmKeep}==0) /varset CharmPet 0
         | CharmOn - 0=Off/1=On
         /for i 1 to ${XSlotTotal}
             /varset skipFlag 0
@@ -88,7 +88,21 @@
                   /delay 3
 				  
               }
-			}
+			} 
+			/if (!${Me.Gem[${CharmSpell}]} && ${IAmABard}) {
+               /if (${CharmOn}) {
+                    /MemSpell ${MiscGem} "${CharmSpell}"
+                    /delay 150 ${Me.Gem[${MiscGem}].Name.Equal[${CharmSpell}]}
+                   DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
+                   /return
+              }
+               /while (!${Me.Gem[${CharmSpell}]}) {
+                   DOPARSE
+                  /delay 3
+				  
+              }
+			} 
+
             | Test -> array not empty,
             /if (${CharmArray[${i},1].Equal[NULL]}) {
                 DEBUGN ${i}  CharmArray[${i},1] was equal to NULL, Skip
@@ -107,7 +121,7 @@
                 /continue
             }
             | Test -> is target MA's current Target
-            /if (${Spawn[${CharmArray[${i},1]}].ID}==${MyTargetID} && ${Spawn[=${MainAssist}].ID} && (${CharmKeep}==0 && !(${CharmPet}))) {
+            /if (${Spawn[${CharmArray[${i},1]}].ID}==${MyTargetID} && ${Spawn[=${MainAssist}].ID} && (${CharmKeep}==0 && !${CharmPet})) {
                 DEBUGN ${Spawn[${CharmArray[${i},1]}].Name} had the same ID(${Spawn[${CharmArray[${i},1]}].ID}) as MyTargetID(${MyTargetID}) & ${MainAssist}(${Spawn[=${MainAssist}].ID}), Skip
                 /call RemoveFromArray CharmArray ${i}
                 /continue
@@ -177,6 +191,10 @@
                 /call RemoveFromArray CharmArray ${i}
                 /continue
             }
+            /if (${IAmABard}) {
+                /attack off
+            }
+            /if (!${Defined[CharmTimer1]}) /call CreateTimersCharm
             DEBUGN CharmTimer ${i} ${CharmTimer${i}} ${Spawn[${CharmArray[${i},1]}].ID}
             /if (${Select[${CharmOn},1]}) {
                 /doevent AttackCalled
@@ -205,26 +223,35 @@
                         /varset CharmPet ${Me.Pet.ID}
                         /echo "Charm Pet ID: ${CharmPet}"
                     }
+                    /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Charmed}]}) {
+                        | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
+                        /call CombatTargetCheck1 1
+                         /if (${MedleyOn}) /squelch /medley
+                    } else {
+                        /call CombatTargetCheck 1
+                    }
 					/return
 				}	
 				/continue	
-			
             } else {
                 |--we're not charming leave
                 /return
             }
 			/if (!${Me.Pet.ID}) {
-                /if (${IAmABard}) /varset PetOn 1
-                /if (${IAmABard}) /varset PetCombatOn 1
 				/varset PetActiveState 0
 				/call BroadCast g "** CHARM FAIL **"
 				/if (${CharmKeep} && ${i}==${XSlotTotal}) {
 					/call BroadCast p "Old pet is Not around: Resetting CharmPetID"
 					/varset CharmPet 0
 					/echo "CharmPetID: ${CharmPet}"
-				}
-				/next i
-			}
+				}               
+            } else {
+                /if (${IAmABard}) /varset PetOn 1
+                /if (${IAmABard}) /varset PetCombatOn 1
+                /call DoPetStuff
+                /return
+            }
+            /next i
 		DEBUGN DoCharmStuff: Leave
     /return
 | -------------------------------------------------------------------------------------

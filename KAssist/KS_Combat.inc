@@ -48,7 +48,7 @@
         | PullerPetTank and PetTank send in pet if mob in range
         /if (${Spawn[${MyTargetID}].PctHPs}<=${PetAssistAt} && ${Spawn[${MyTargetID}].Distance}<${PetAttackRange}) /call CombatPet
         /if (${AggroOn} && !${IAmMA} && ${Select[${Role},Tank]} && ${Spawn[${MyTargetID}].Distance}>${CombatRadius}) /call AggroCheck
-        /if (${Spawn[${MyTargetID}].Type.NotEqual[Corpse]} && ${Spawn[${MyTargetID}].PctHPs}<=${AssistAt} && (${Spawn[${MyTargetID}].Distance}<${CombatRadius} || (${Math.Distance[${CampYLoc},${CampXLoc}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CombatRadius} && ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius}))) {
+        /if (${Spawn[${MyTargetID}].Type.NotEqual[Corpse]} && !${Bool[${Target.Charmed}]} && ${Spawn[${MyTargetID}].PctHPs}<=${AssistAt} && (${Spawn[${MyTargetID}].Distance}<${CombatRadius} || (${Math.Distance[${CampYLoc},${CampXLoc}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CombatRadius} && ${Math.Distance[${Target.Y},${Target.X}:${Spawn[=${MainAssist}].Y},${Spawn[=${MainAssist}].X}]}<=${CampRadius}))) {
             /if (!${CombatStart}) {
                 DEBUGCOMBAT Combat Setting CombatStart to 1
                 /if (${Cursor.ID}) /call CheckCursor Combat 0
@@ -147,7 +147,7 @@
                         /call DoDebuffStuff ${MyTargetID}
                     }
                     |When returning the mob you were started on could be dead, so don't keep trying to kill a corpse.
-                    /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID} || ${DPSPaused}) {
+                    /if (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || ${Bool[${Target.Charmed}]} || !${Spawn[${MyTargetID}].ID} || ${DPSPaused}) {
                         /call CombatReset 0 combat
                         /break
                     }
@@ -303,7 +303,7 @@
         | If mob is dead return
         DEBUGCOMBAT CombatTargetCheck1 ${MyTargetID} ${Spawn[${MyTargetID}].Type} ${CalledTargetID} ${TargetSwitchingOn}
         /if (${IAmMA}) {
-            /if (${TargetSwitchingOn} && ${Target.ID} && ${Spawn[${Target.ID}].Type.Equal[Corpse]}) /return
+            /if (${TargetSwitchingOn} && ${Target.ID} && (${Spawn[${Target.ID}].Type.Equal[Corpse]} || ${Bool[${Spawn[${Target.ID}].Type.Equal[Corpse]}]})) /return
         } else {
             /if (${TargetSwitchingOn}) /return
         }
