@@ -63,11 +63,11 @@
         /if (${Me.Combat} || ${Me.CombatState.Equal[combat]} || ${DPSOn}) /varset CharmCombat True
         /call CharmRadar
         DEBUGN DoCharmStuff CharmMobCount ${CharmMobCount} ${CharmCombat}
-        /if ((${CharmMobCount}<2) && (${CharmKeep}==0)) {
-            DEBUGN CharmMobCount was ${CharmMobCount} (so less than 2) & ${MainAssist} is alive so we return
-            /varset CharmMobDone 1
-            /return
-        }
+|        /if ((${CharmMobCount}<2) && (${CharmKeep}==0)) {
+|            DEBUGN CharmMobCount was ${CharmMobCount} (so less than 2) & ${MainAssist} is alive so we return
+|            /varset CharmMobDone 1
+|            /return
+|        }
 		/if (${CharmKeep}==0) /varset CharmPet 0
         | CharmOn - 0=Off/1=On
         /for i 1 to ${XSlotTotal}
