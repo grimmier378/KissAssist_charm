@@ -241,9 +241,9 @@
 				/varset PetActiveState 0
 				/call BroadCast g "** CHARM FAIL **"
 				/if (${CharmKeep} && ${i}==${XSlotTotal}) {
-					/call BroadCast p "Old pet is Not around: Resetting CharmPetID"
-					/varset CharmPet 0
-					/echo "CharmPetID: ${CharmPet}"
+					/call BroadCast p "Old pet is Not in Range!"
+				|--	/varset CharmPet 0
+				|--	/echo "CharmPetID: ${CharmPet}"
 				}               
             } else {
                 /if (${IAmABard}) /varset PetOn 1
