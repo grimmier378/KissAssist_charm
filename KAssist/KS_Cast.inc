@@ -810,12 +810,13 @@
             DEBUGCAST CastInteruptHeals  CheckHP1: ${Target.Type}
         }
         | Override default heal interupts if caster MA and has his own healing set. ie pally or sk
-        /if (${Target.Type.NotEqual[npc]} && ${SHealPct}>65 && ${Target.PctHPs}>${SHealPct} && !${CIHSpell.Find[promised]}) {
-            /stopcast
-            /varset CastResult CAST_CANCELLED
-            /echo ${CIHSpell} interrupted. Target is above required ${SHealPct}% health. ${Target}
-            DEBUGCAST CastInteruptHeals CheckHP2: ${Target.PctHPs} ${SHealPct}
-        }
+       | /if (${Target.Type.NotEqual[npc]} && ${SHealPct}>65 && ${Target.PctHPs}>${SHealPct} && !${CIHSpell.Find[promised]}) {
+       |/if (${Target.Type.NotEqual[npc]} && ${SHealPct}>65 && !${CIHSpell.Find[promised]}) {
+           | /stopcast
+           | /varset CastResult CAST_CANCELLED
+           | /echo ${CIHSpell} interrupted. Target is above required ${SHealPct}% health. ${Target}
+           | DEBUGCAST CastInteruptHeals CheckHP2: ${Target.PctHPs} ${SHealPct}
+        |}
         DEBUGCAST CastInteruptHeals Leave
     /return
 |--------------------------------------------------------------------------------------
