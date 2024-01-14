@@ -385,7 +385,9 @@
                     }
                     /if (${wasCombat}) {
                         /varset wasCombat 0
-                        /attack on
+                       | /delay 15
+                        /call CombatTargetCheck 0
+                        |/attack on
                     }
                     /break
                 }
