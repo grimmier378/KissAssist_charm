@@ -6437,7 +6437,7 @@ Sub Main
                         }
                     }
                     /call LoadIni Pet PetForceHealOnMed     int         0
-                } else /if (!${Defined[PetOn]}) {
+                } else {
                     /declare PetForceHealOnMed              int         outer   0
                     /declare PetOn                          int         outer   0
                     /declare PetBuffsOn                     int         outer   0
@@ -6449,6 +6449,7 @@ Sub Main
                     /declare PetHold                        string      outer   0
                     /declare PetSpell                       string      outer   "NULL"
                     /declare PetToysOn                      int         outer   0
+                    /declare PetToysGave                    string      outer   NULL
                     /declare PetFocus                       string      outer   "NULL"
                     /declare PetShrinkOn                    int         outer   0
                     /declare PetAttackDistance              int         outer   0
