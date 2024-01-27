@@ -70,7 +70,7 @@
                 DEBUGCAST CastWhat \aw Target Info !${Target.ID} ${Target.ID}!=${WhatID} ${Spawn[id ${WhatID}].ID} ${ReadyToCast} ${str_TargetType}
                 | Check if Castwhat has a conditon attached to it.
                 /if (${CondNumber}) {
-                    /if (${Cond[${CondNumber}].Find[TARGETCHECK]}) {
+                    /if (${Cond[${CondNumber}].Find[TARGETCHECK]} || ${Cond[${CondNumber}].Find[WhatID]}) {
                         /if (${str_TargetType.NotEqual[Self]} && (!${Target.ID} || (${Target.ID}!=${WhatID} && ${Spawn[id ${WhatID}].ID}))) /call CastTarget ${WhatID}
                     }
                     /if (${If[${Cond[${CondNumber}]},0,1]}) /return CAST_COND_FAILED
@@ -618,7 +618,7 @@
             /if (!${ignorePlaying}) {
                 /while (${Me.BardSongPlaying}) {
                     /squelch /medley off
-                    /delay 5
+                    /delay 15 !${Medley.Active}
                     /if (${Me.Casting.ID}) /stopsong
                     /delay 30 !${Me.Casting.ID}
                 }
@@ -1030,7 +1030,7 @@
                     }
                 }
                 /if (${Select[${EverQuest.Server},zek]} && ${Select[${Target.Type},PC]} && ${Me.Combat}) {
-                    /attack off
+                    /squelch /attack off
                     /delay 25 !${Me.Combat}
                 }
                 /if (${SHealThem}==${MainAssistID} && ${Spawn[${MainAssist} ${MainAssistType}].ID}) {

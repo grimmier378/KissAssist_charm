@@ -184,21 +184,20 @@
                 /call RemoveFromArray MezArray ${i}
                 /continue
             }
-            /if (${IAmABard}) {
-                /attack off
+            /if (${Me.Combat}) {
+            /if (${UseMQ2Melee}) /squelch /melee off
+                /squelch /attack off            
+                /delay 40 !${Me.Combat}
             }
             DEBUGMEZ MezTimer ${i} ${MezTimer${i}} ${Spawn[${MezArray[${i},1]}].ID}
             /if (${Select[${MezOn},1,2]}) {
                 /doevent AttackCalled
                 /if (${CalledTargetID}) {
-                     DEBUGMEZ "--> Checking target before turning on attack!! <--"
                     /call CombatTargetCheck 0
                     /if (${MyTargetID}==${MezArray[${i},1]}) /continue
                 }
+                DEBUGMEZ im gonna singlemez ${MezArray[${i},1]} ${Me.Invis}
                 /if (${Me.Invis}) /makemevisible
-
-				DEBUGMEZ im gonna singlemez ${MezArray[${i},1]} ${Me.Invis}
-				/if (${Me.Invis}) /makemevisible
                 /call MezMobs ${MezArray[${i},1]} ${i}
                 /varset MezMobDone 1
                 /if (${Macro.Return.Equal[CAST_CANCELLED]} && ${MezAETimer}==0 && ${MezOn}==1) {
@@ -206,21 +205,44 @@
                     /call MezMobsAE ${MezAEClosest}
                     /varcalc i ${i}-1
                 }
-			}
-        }
+            }
         /next i
         /if (!${Target.ID} || ${Target.ID}!=${MyTargetID}) {
-            /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Mezzed}]}) {
-               | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
-                /call CombatTargetCheck1 1
-              /if (${MedleyOn}) /squelch /medley
-            } else {
-                /if (${mezCombat}) /call CombatTargetCheck 1
-            }	|-> Do we want to Charm stuff? if So call CharmStuff after mezzing *its safer that way*
+            |-> return to combat if able.
+            /if (!${Me.Combat}) {
+             DEBUGN DoMezStuff: Check 0: I am NOT in combat!
+                /if (${IAmABard} && ${CombatStart} && ${mezCombat}) {
+                    DEBUGN DoMezStuff: Check 1: (${IAmABard} && ${CombatStart} && ${mezCombat})
+                    /squelch /target id ${Me.GroupAssistTarget.ID}
+                    /delay 20 ${Target.ID}==${Me.GroupAssistTarget.ID}
+                    /doevent AttackCalled
+                    DEBUGN DoMezStuff: Attack Called ID: ${CalledTargetID}
+                    /if (${CalledTargetID}) {
+                    
+                        /if (${Target.ID}==${CalledTargetID}) {
+                        DEBUGN DoMezStuff: Check 2: ${Target.ID}::${CalledTargetID}
+                            /while (${Bool[${Target.Mezzed}]}) {
+                                /delay 2
+                                DEBUGN DoMezStuff: Check 3: Target is Mezzed!, waiting for MA to break
+                                |--> Target is still mezzed waiting for MA to wake it up!
+                                DOPARSE
+                            }
+                             DEBUGN DoMezStuff: Check 4: TURNING ATTACK BACK ON!!!
+                            /call CombatTargetCheck 1
+                            /if (${UseMQ2Melee}) /squelch /melee on
+                            /squelch /attack on
+                        }
+                    }
+                } else {
+                DEBUGN DoMezStuff: Check 5: Calling CombatTargetCheck 1
+                    /if (${mezCombat}) /call CombatTargetCheck 1
+                }
+            }
         }
-		/if (${CharmOn}==1 && !${Me.Pet.ID}) {
-			/call DoCharmStuff DoMezStuff
-		}
+            |-> Do we want to Charm stuff? if So call CharmStuff after mezzing *its safer that way*
+            /if (${CharmOn}==1 && !${Me.Pet.ID}) {
+                /call DoCharmStuff DoMezStuff
+            }
 		DEBUGMEZ DoMezStuff: Leave
     /return
     
@@ -237,7 +259,8 @@
         }
         /if (${IAmABard}) {
             /if (${Target.ID}) /varset AEMezID ${Target.ID}
-            /attack off
+            /if (${UseMQ2Melee}) /squelch /melee off
+            /squelch /attack off
             /call CastWhat "${MezAESpell}" ${AEMezID} Mez 0 0
             /call BroadCast g "MEZZING-> AE Mezzing Now - ${MezAESpell} "
             /varset MezAETimer 300
@@ -286,9 +309,10 @@
         /declare ReMez int local 0
         /declare wasCombat int local 0
         /if (${Me.Combat}) {
-            /attack off
+            /if (${UseMQ2Melee}) /squelch /melee off
+            /squelch /attack off
             /varset wasCombat 1
-            /delay 25 !${Me.Combat}
+            /delay 35 !${Me.Combat}
         }
         | Added this check because of timing. Mob to mez was getting DOTed because of MeleeTwist.
         /if (${IAmABard} && ${MeleeTwistOn}) /call CastBardCheck 0
@@ -352,7 +376,8 @@
                 /while (1) {
                     /if (${Me.Combat}) {
                         /varset wasCombat 1
-                        /attack off
+                        /if (${UseMQ2Melee}) /squelch /melee off
+                        /squelch /attack off
                         |--- turn off attack you silly bard, or  you will break your mez. 
                         /delay 35 !${Me.Combat}
                         /call CastWhat "${MezSpell}" ${MobID} MezMobs 0 0
@@ -382,12 +407,6 @@
                     } else /if (${Macro.Return.Equal[CAST_CANCELLED]}) {
                         DEBUGMEZ Cast Cancelled ${Macro.Return}
                         /if (${CastingInterruptOn}) /return CAST_CANCELLED
-                    }
-                    /if (${wasCombat}) {
-                        /varset wasCombat 0
-                       | /delay 15
-                        /call CombatTargetCheck 0
-                        |/attack on
                     }
                     /break
                 }

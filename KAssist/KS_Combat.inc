@@ -549,7 +549,7 @@
                 }
                 DEBUGCOMBAT CombatCast  DPSTarget: ${DPSTargetID} ${Spawn[${DPSTargetID}]} End: ${DPSSkip} ${Spawn[${DPSTargetID}].PctHPs} Start: ${DPSAt} Target: ${Target.ID} Timer: ${DPSTimer${i}} DPSOn: ${DPSOn}
                 /if (${Select[${DPSPart3},Me,MA]} && ${Me.Combat} && !${IAmMA}) {
-                    /attack off
+                    /squelch /attack off
                     /delay 10 !${Me.Combat}
                 }
                 | Only cast spells with weave tag during global cooldown
@@ -1730,7 +1730,7 @@
             /varset DebuffTargetID ${Me.XTarget[${j}].ID}
             DEBUGCOMBAT DoDebuffStuff Target: ${DebuffTargetID}=${Target.ID} DebuffAllOn: ${DebuffAllOn} J: ${j}
             /if (${MeleeOn} && ${Me.Combat} && (!${IAmMA} || ${DebuffTargetID}!=${Target.ID})) {
-                /attack off
+               /squelch /attack off
                 /delay 10 !${Me.Combat}
                 /varset WasAttacking 1
             }

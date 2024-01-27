@@ -118,7 +118,12 @@
             /return
         }
         /if (${Spawn[${MainAssist}].Type.Equal[pet]} && ${Spawn[${MainAssist}].Master.CleanName.Equal[${mezbreaker}]}) /return
-        /call BroadCast g ">> ${Spawn[=${mezbreaker}].CleanName} << has awakened -> ${mezmob}<-"
+        /if (${Spawn[=${mezbreaker}].CleanName.Equal[${Me.CleanName}]}) {
+            /call BroadCast y "****Opps! I BROKE MY OWN MEZ on: **** ${mezmob}<- My Target: ${MyTargetName}"
+            |--/beep
+        } else {
+            /call BroadCast g ">> ${Spawn[=${mezbreaker}].CleanName} << has awakened -> ${mezmob}<- ${MyTargetName}"
+        }
         /for i 1 to 30
             DEBUGMEZ ${MezArray[${i},3]} - ${MezArray[${i},1]}
             /if (${MezArray[${i},3].Equal[${mezmob}]} && ${MezArray[${i},1].NotEqual[null]} && ${MezArray[${i},1]}!=${MyTargetID}) {

@@ -4123,8 +4123,6 @@ Sub Main
                 /call CreateTimersBuffs
                 /echo Buffs on creating timers
             }
-		} else /if (${IName.Find[setcharmed]}) {
-           /varset CharmPet ${Me.Pet.ID}
         } else /if (${IName.Equal[ChaseAssist]}) {
             /if (${IVar}) {
                 /if (${ReturnToCamp}) {
@@ -5788,10 +5786,13 @@ Sub Main
         /if (${Select[${Me.Class.ShortName},BER,MNK,ROG,WAR]}) /return
         /varcalc GemSlots ${Int[${Me.AltAbility[Mnemonic Retention].Rank}]}+8
         /declare i int local
-        /for i 1 to ${GemSlots}
+        /if (${IAmABard}) /call BroadCast g "***Writing songs to: ${EverQuest.Server}_${Me.CleanName}.ini ***"
+                /for i 1 to ${GemSlots}
             /if (!${Quite}) /echo Gem ${i}: ${Me.Gem[${i}].Name}
             /ini "${IniFileName}" "Spells" "Gem${i}" "${Me.Gem[${i}].Name}"
-            /ini "${EverQuest.Server}_${Me.CleanName}.ini" "Gems-Ref" "Gem${i}" "${Me.Gem[${i}].Name}"
+            /if (${IAmABard}) {                
+                /ini "${EverQuest.Server}_${Me.CleanName}.ini" "Gems-Ref" "Gem${i}" "${Me.Gem[${i}].Name}"
+            }
         /next i
     /return
 | -------------------------------------------------------------------------------------
@@ -6134,8 +6135,8 @@ Sub Main
         }
         /if (${command1.Equal[load]}) {
             /if (!${command2.Length} || ${command2.Equal[null]}) /varset command2 all
-            /if (!${Select[${command2},all,general,spells,buffs,melee,gom,gmail,ae,dps,aggro,heals,cures,pet,merc,mez,burn,pull,pulladvanced,afktools,conditions]}) {
-                /echo Invalid reload option. Valid options are: general, spells, buffs, melee, gom, gmail, ae, dps, aggro, heals, cures, pet, merc, mez, burn, pull, pulladvanced, afktools, conditions, or all.
+            /if (!${Select[${command2},all,general,spells,buffs,melee,gom,gmail,ae,dps,aggro,heals,cures,pet,charm,merc,mez,burn,pull,pulladvanced,afktools,conditions]}) {
+                /echo Invalid reload option. Valid options are: general, spells, buffs, melee, gom, gmail, ae, dps, aggro, heals, cures, pet, charm, merc, mez, burn, pull, pulladvanced, afktools, conditions, or all.
                 /return
             }
             /echo Loading INI Info from ${command2} Section(s).
@@ -6396,7 +6397,7 @@ Sub Main
                 |/if (${Defined[CharmCount]}) /deletevar CharmCount
 				|/if (${Defined[CharmPet]}) /deletevar CharmPet
                 |/if (${Defined[CharmAEClosest]}) /deletevar CharmAEClosest
-                /if (${Select[${Me.Class.ShortName},DRU,SHM,BST,ENC,MAG,NEC,SHD,BRD]}) {
+                /if (${Select[${Me.Class.ShortName},DRU,SHM,BST,ENC,MAG,NEC,SHD]}) {
                     /call LoadIni Pet PetOn                 int         0
                     /call LoadIni Pet PetSpell              string      "YourPetSpell"
                     /call LoadIni Pet PetFocus              string      "NULL"
@@ -6420,27 +6421,7 @@ Sub Main
                         /declare PetToysGave                string      outer   NULL
                         /declare PetToysOn                  int         outer   0
                     }
-					/if (${Select[${Me.Class.ShortName},DRU,ENC,NEC,BRD]}) {
-					/call LoadIni Pet CharmOn                 int         0
-					/call LoadIni Pet CharmSpell              string      NULL
-					/call LoadIni Pet CharmMinLevel           int         5
-                    /call LoadIni Pet CharmMaxLevel           int         0
-					/call LoadIni Pet CharmRadius             int         50
-					/call LoadIni Pet CharmKeep 			   int 			0
-					/if (!${Defined[CharmAEClosest]}) /declare CharmAEClosest                   int         outer 0
-					/if (!${Defined[CharmCount]}) /declare CharmCount[13]                   int         outer 0
-
-					| This loads and declares the CharmImmune var
-					/call LoadIni "${ZoneName}" CharmImmune   string      "List up to 10 mobs. Use full names i.e. a green snake,a blue tiger,a wide eye ooze or NULL" NULL ${InfoFileName}
-					/call CreateTimersCharm
-						|KissAssist_Info variables
-						/if (!${CharmImmune.Find[null]} && ${CharmImmune.Length}>0) {
-							/squelch /alert clear 4
-							/call AlertAddToList 4 "${CharmImmune}"
-						} else {
-							/varset CharmImmune null
-						}
-					}
+					
 
                     /call LoadIni Pet PetBreakMezSpell      string      NULL
                     /call LoadIni Pet PetRampPullWait       int         0
@@ -6459,21 +6440,52 @@ Sub Main
                 } else /if (!${Defined[PetOn]}) {
                     /declare PetForceHealOnMed              int         outer   0
                     /declare PetOn                          int         outer   0
+                    /declare PetBuffsOn                     int         outer   0
                     /declare PetAssistAt                    int         outer   0
                     /declare PetCombatOn                    int         outer   0
                     /declare PetRampPullWait                int         outer   0
+                    /declare PetSuspend                     int         outer   0
                     /declare PetHoldOn                      int         outer   0
                     /declare PetHold                        string      outer   0
+                    /declare PetSpell                       string      outer   "NULL"
                     /declare PetToysOn                      int         outer   0
+                    /declare PetFocus                       string      outer   "NULL"
+                    /declare PetShrinkOn                    int         outer   0
                     /declare PetAttackDistance              int         outer   0
                 }
             }
-			/if (!${Defined[CharmOn]}) /declare CharmOn      int         outer   0
-			/if (!${Defined[CharmRadius]}) /declare CharmRadius      int         outer   0
-			/if (!${Defined[CharmMaxLevel]}) /declare CharmMaxLevel      int         outer   0
-			/if (!${Defined[CharmMinLevel]}) /declare CharmMinLevel      int         outer   80
-			/if (!${Defined[CharmSpell]}) /declare CharmSpell      string         outer   0
-			/if (!${Defined[CharmKeep]}) /declare CharmKeep 		int			outer 		0
+
+            | ************************* Charm *****************************************|     
+            /if (${Select[${command2},all,charm]}) {    
+                /if (${Select[${Me.Class.ShortName},DRU,ENC,NEC,BRD]}) {
+					/call LoadIni Charm CharmOn                 int         0
+					/call LoadIni Charm CharmSpell              string      NULL
+					/call LoadIni Charm CharmMinLevel           int         5
+                    /call LoadIni Charm CharmMaxLevel           int         0
+					/call LoadIni Charm CharmRadius             int         50
+					/call LoadIni Charm CharmKeep 			   int 			0
+					/if (!${Defined[CharmAEClosest]}) /declare CharmAEClosest                   int         outer 0
+					/if (!${Defined[CharmCount]}) /declare CharmCount[13]                   int         outer 0
+
+					| This loads and declares the CharmImmune var
+					/call LoadIni "${ZoneName}" CharmImmune   string      "List up to 10 mobs. Use full names i.e. a green snake,a blue tiger,a wide eye ooze or NULL" NULL ${InfoFileName}
+                    /call LoadIni "${ZoneName}" AACharmImmune int         0 0 ${InfoFileName}
+					/call CreateTimersCharm
+						|KissAssist_Info variables
+						/if (!${CharmImmune.Find[null]} && ${CharmImmune.Length}>0) {
+							/squelch /alert clear 4
+							/call AlertAddToList 4 "${CharmImmune}"
+						} else {
+							/varset CharmImmune null
+						}
+                }
+                /if (!${Defined[CharmOn]}) /declare CharmOn      int         outer   0
+                /if (!${Defined[CharmRadius]}) /declare CharmRadius      int         outer   0
+                /if (!${Defined[CharmMaxLevel]}) /declare CharmMaxLevel      int         outer   0
+                /if (!${Defined[CharmMinLevel]}) /declare CharmMinLevel      int         outer   80
+                /if (!${Defined[CharmSpell]}) /declare CharmSpell      string         outer   0
+                /if (!${Defined[CharmKeep]}) /declare CharmKeep 		int			outer 		0
+            }
             | ************************* Merc ****************************************|
             /if (${Select[${command2},all,merc]}) {
                 /call LoadIni Merc Help                     string      "To use: Turn off Auto Assist in Manage Mercenary Window"
@@ -7805,10 +7817,10 @@ Sub Main
             /squelch /alias /meleeon        /togglevariable MeleeOn
             /squelch /alias /mercassistat   /changevarint Merc MercAssistAt
             /squelch /alias /mezon          /changevarint Mez MezOn
-			/squelch /alias /docharm        /changevarint Pet CharmOn
+			/squelch /alias /docharm        /changevarint Charm CharmOn
 			/squelch /alias /charmkeep      /togglevariable CharmKeep
 			/squelch /alias /charmon   		/togglevariable CharmOn
-            /squelch /alias /medleyon   		/togglevariable MedleyOn
+            /squelch /alias /medleyon   	/togglevariable MedleyOn
             /squelch /alias /movewhenhit    /togglevariable MoveWhenHit
             /squelch /alias /pethold        /togglevariable PetHold
             /squelch /alias /peton          /togglevariable PetOn
@@ -7821,7 +7833,8 @@ Sub Main
             /squelch /alias /scatteron      /togglevariable ScatterOn
             /squelch /alias /setae          /iniwrite AE
             /squelch /alias /setaggro       /iniwrite Aggro
-            /squelch /alias /setcharmed       /varset CharmPet ${Me.Pet.ID}			
+            /squelch /alias /setcharmed     /varset CharmPet ${Me.Pet.ID}
+            /squelch /alias /resetcharmed   /squelch /varset CharmPet 0			
             /squelch /alias /setbackoff     /backoff
             /squelch /alias /setbuffs       /iniwrite Buffs
             /squelch /alias /setburn        /iniwrite Burn

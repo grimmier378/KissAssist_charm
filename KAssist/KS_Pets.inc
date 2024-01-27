@@ -85,7 +85,7 @@
         }
 	}
         /if (${Me.Pet.ID}) /varset PetActiveState 1
-		|/if (${Me.Pet.ID} && ${CharmKeep} && (${CharmPet}>0)) /varset CharmPet ${Me.Pet.ID}
+		/if (${Me.Pet.ID} && ${CharmKeep}) /varset CharmPet ${Me.Pet.ID}
     /return
 | -------------------------------------------------------------------------------------
 | SUB: DoPetStuff
@@ -275,7 +275,7 @@
         /call CheckPetBuffs
         | Pet Toy routines
         | Condition revised to only call PetToys if I do not have my pet name in the PetToysGave string.
-        /if (${Me.Pet.ID} && ${PetToysOn} && (!${PetToysGave.Find[${Me.Pet.CleanName}]} || !${PetToysGave.Find[Summoned]})) {
+        /if (!${CharmOn} && (${Me.Pet.ID} && ${PetToysOn} && (!${PetToysGave.Find[${Me.Pet.CleanName}]} || !${PetToysGave.Find[Summoned]}))) {
             /call PetToys ${Me.Pet.CleanName}
             /varset g_PetToysGave ${PetToysGave}
         }
