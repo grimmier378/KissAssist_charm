@@ -456,7 +456,7 @@
                         /varcalc PullRange ${Spawn[id ${MyTargetID}].MaxRangeTo}*.90
                     }
                     /if (${Target.ID} && ${Target.ID}!=${PullMob}) {
-                        /if (${Me.Combat}) /attack off
+                        /if (${Me.Combat}) /squelch /attack off
                         /squelch /target clear
                     }
                     /call Pull
@@ -1116,7 +1116,7 @@
         }
         | Turn off combat so puller returns to camp. You mean run like hell.
         /if (${Select[${Role},puller,pullertank,pullerpettank,hunterpettank]}) {
-            /attack off
+           /squelch /attack off
             /if (${Stick.Active}) /stick off
             /squelch /target clear
             | Turn on mq2melee function back on after pull
@@ -1166,7 +1166,7 @@
                 }
                 | Mod for puller to turn back to camp after /range this saves on the puller turning AFTER mob is aggroed and turns facing camp while waiting for mob to aggro.
                 /if (${Me.Combat}) {
-                    /Attack off
+                    /squelch /Attack off
                     /delay 20 !${Me.Combat}
                 }
                 /if (${Stick.Active}) /stick off

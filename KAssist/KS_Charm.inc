@@ -89,17 +89,18 @@
 				  
               }
 			} 
-			/if (!${Me.Gem[${CharmSpell}]} && ${IAmABard}) {
+			/if (!${Me.Gem[${CharmSpell}]}) {
                /if (${CharmOn}) {
                     /MemSpell ${MiscGem} "${CharmSpell}"
                     /delay 150 ${Me.Gem[${MiscGem}].Name.Equal[${CharmSpell}]}
                    DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
                    /return
               }
-               /while (!${Me.Gem[${CharmSpell}]}) {
-                   DOPARSE
-                  /delay 3
-				  
+         |--     /while (!${Me.Gem[${CharmSpell}]}) {
+         |--         DOPARSE
+         |--        /delay 3
+                DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
+				  /return
               }
 			} 
 
@@ -192,7 +193,7 @@
                 /continue
             }
             /if (${IAmABard}) {
-                /attack off
+                /squelch /attack off
             }
             /if (!${Defined[CharmTimer1]}) /call CreateTimersCharm
             DEBUGN CharmTimer ${i} ${CharmTimer${i}} ${Spawn[${CharmArray[${i},1]}].ID}
@@ -215,7 +216,6 @@
 					/varset PetActiveState 1
                     /if (${IAmABard}) /varset PetOn 1
                     /if (${IAmABard}) /varset PetCombatOn 1
-					|/call RemoveFromArray MezArray ${i}
 					/call BroadCast g "*** Charm Sucessfull ***"						
 					/varset CharmMobDone 1
 					/squelch /pet back off
@@ -226,7 +226,7 @@
                     /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Charmed}]}) {
                         | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
                         /call CombatTargetCheck1 1
-                         /if (${MedleyOn}) /squelch /medley
+                         |/if (${MedleyOn}) /squelch /medley
                     } else {
                         /call CombatTargetCheck 1
                     }
@@ -245,11 +245,6 @@
 				|--	/varset CharmPet 0
 				|--	/echo "CharmPetID: ${CharmPet}"
 				}               
-            } else {
-                /if (${IAmABard}) /varset PetOn 1
-                /if (${IAmABard}) /varset PetCombatOn 1
-                /call DoPetStuff
-                /return
             }
             /next i
 		DEBUGN DoCharmStuff: Leave
@@ -263,7 +258,7 @@
         /declare CharmTry int local 1
         /declare ReCharm int local 0
         /if (${Me.Combat}) {
-            /attack off
+            /squelch /attack off
             /delay 25 !${Me.Combat}
         }
         /squelch /target id ${MobID}
@@ -285,26 +280,6 @@
                 /varset ReCharm 1
             }
 			| Charm Code
-            /if (${Me.Class.Name.Equal[Necromancer]}) {
-                /while (1) {
-                    /call CastWhat "${CharmSpell}" ${MobID} Charm 0 0
-                    /varcalc CharmFail ${CharmFail}+1
-                    /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                        /varcalc CharmCount[${TimerNum}] ${CharmCount[${TimerNum}]}+1
-                        /varcalc CharmTimer${TimerNum} (${Spell[${CharmSpell}].MyDuration.TotalSeconds}*10)*.95
-                        DEBUGN CharmMobs CharmTimer${TimerNum} ${CharmTimer${TimerNum}}
-						/call PetStateCheck
-                        | Necro flag to release from charm loop since spell has 6 sec refresh.
-                    } else /if (${Macro.Return.Equal[CAST_RESISTED]} && ${CharmFail}<2) {
-                        /call BroadCast g "CHARM Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
-                        /continue
-                    } else /if (${Macro.Return.Equal[CAST_IMMUNE]}) {
-                        /if (!${CharmImmuneIDs.Find[|${Target.ID}]}) /call AddCharmImmune ${Target.ID}
-                        /if (${AACharmImmune}) /call Bind_AddCharmImmune ${Target.CleanName}
-                    }
-                    /break
-                }
-            } else {
                 /while (1) {
                     /call CastWhat "${CharmSpell}" ${MobID} CharmMobs 0 0
                     /varcalc CharmFail ${CharmFail}+1
@@ -343,7 +318,7 @@
                     }
                     /break
                 }
-            }
+            
             /varset CharmTry 0
         }
         DEBUGN CharmMobs Leave
