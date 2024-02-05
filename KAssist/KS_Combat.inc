@@ -19,6 +19,9 @@
                 /return
             }
         }
+        /if (${Target.Charmed.ID} && ${Select[${Role},tank,pullertank,pettank,pullerpettank]}) {
+            /if (${Bool[${Target.Charmed}]}) /call MobRadar los ${MeleeDistance} CheckForCombat                
+        }
         /if (${Select[${Role},tank,pullertank]}==0 && (${Me.Song[Rallying Call].ID} || ${Me.Song[Rallying Solo].ID})) /return
         DEBUGCOMBAT Combat Enter
         /declare CombatRadius int   local ${If[${Spawn[id ${MyTargetID}].MaxRangeTo}>${MeleeDistance},${Math.Calc[${Spawn[id ${MyTargetID}].MaxRangeTo}+5]},${MeleeDistance}]}
@@ -937,6 +940,9 @@
             }
             /call CheckForAdds CheckForCombat
             /if (${Select[${Role},tank,pullertank]}) {
+            /if (${Bool[${Target.Charmed}]}) {
+                /call MobRadar los ${MeleeDistance} CheckForCombat
+            }
                 | If tank is assisting puller and in chase mode
                 /if (${WhoToChase.NotEqual[${Me}]} && ${ChaseAssist}) /call DoWeChase
                 /if (${ReturnToCamp} && ((!${MobCount} && ${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]}>15) || (${MobCount}==1 && ${AggroTargetID} && ${Math.Distance[${CampYLoc},${CampXLoc},${CampZLoc}]}>75))) /call DoWeMove 1 checkforcombat
@@ -952,7 +958,7 @@
             } else /if (${Role.NotEqual[manual]} ) {
                 /if (${MyTargetID} && (${Spawn[${MyTargetID}].Type.Equal[Corpse]} || !${Spawn[${MyTargetID}].ID})) /call CombatReset 0 CheckForCombat2
             }
-            /call MobRadar los ${MeleeDistance} CheckForCombat
+            
 			/if (${CharmOn}==1) /call CharmRadar los ${MeleeDistance} CheckForCombat
 			
             DEBUGCOMBAT CheckForCombat MobCount: ${MobCount} AggroTargetID: ${AggroTargetID} ChainPull: ${ChainPull} ${SkipCombat} ${MezMobFlag}
@@ -1236,6 +1242,9 @@
         /declare MobType string local
         /declare MeleeDistanceCheck int local ${MeleeDistance}
         /varset ValidTarget 0
+        /if (${Target.Charmed.ID} && ${Select[${Role},tank,pullertank,pettank,pullerpettank]}) {
+            /if (${Bool[${Target.Charmed}]}) /call MobRadar los ${MeleeDistance} CheckForCombat                
+        }
         /if (${SpawnID}) {
            /varset MobID ${Spawn[${SpawnID}].ID}
            /varset MobName ${Spawn[${SpawnID}].CleanName}
@@ -1596,6 +1605,9 @@
         /declare AggroPCT     int    local
         /declare AggroTarget  string local
         /declare AggroTID     int    local
+        /if (${Target.Charmed.ID} && ${Select[${Role},tank,pullertank,pettank,pullerpettank]}) {
+            /if (${Bool[${Target.Charmed}]}) /call MobRadar los ${MeleeDistance} CheckForCombat                
+        }
         /if (${IAmMA} && ${TargetSwitchingOn} && ${Target.ID} && ${Target.ID}!=${MyTargetID} && ${CombatStart}) /call CombatTargetCheck 1
         /if (!${MyTargetID}) /return
         /for i 1 to ${Aggro.Size}

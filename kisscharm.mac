@@ -133,7 +133,9 @@
 #Event KTInvite          "[MQ2] KTInvite #1#"
 #Event KTSay             "[MQ2] KTSay #1# #2#"
 #Event KTTarget          "[MQ2] KTTarget #1#"
-|#Event CharmBackO	 	 "#*#Charm Sucessfull#*#"
+#Event CharmBackO	 	 "#*#Charm Sucessfull#*#"
+#Event CharmBackO	 	 "#*#JUST CHARMED#*#"
+#Event CharmBackO	 	 "#*#JUST RECHARMED#*#"
 #Event LeftGroup         "#1# has left the group."
 #Event MezBroke          "#1# has been awakened by #2#."
 |#Event CharmBroke        "Your #1# spell has worn off of #2#."
@@ -153,6 +155,7 @@
 #Event Zoned             "You have entered#*#"
 #Event AskForBuffs       "#1# tells you,#*#Buffs Please!#*#"
 #Event AskForBuffs       "#1# says,#*#Buffs Please!#*#"
+|#Event MeleeOOR          "Your target is too far away, get closer#*#"
 |**************************************** COMBAT EVENTS ***********************************************|
 #Event AttackCalled      "<#1#>#*#TANKING-> #*# <- ID:#2#"
 #Event AttackCalled     "[ #1# (#*#) ]#*#TANKING-> #*# <- ID:#2#"
@@ -3203,7 +3206,7 @@ Sub Main
                 /for i 1 to ${MobCount}
                     /varset NMob ${NearestSpawn[${i},npc targetable los radius ${CountRadius} zradius 50 noalert 3].ID}
                     /if (${i}>${XSlotTotal}) /break
-                    /if (${NMob} && (${Spawn[${NMob}].Type.Equal[Corpse]} || !${Spawn[${NMob}].ID})) {
+                    /if (${NMob} && (${Spawn[${NMob}].Type.Equal[Corpse]} || !${Spawn[${NMob}].ID}) || ${Spawn[${NMob}].Master}) {
                         |/call RemoveFromArray AddsArray ${Select[${NMob},${AddsArray[1,1]},${AddsArray[2,1]},${AddsArray[3,1]},${AddsArray[4,1]},${AddsArray[5,1]},${AddsArray[6,1]},${AddsArray[7,1]},${AddsArray[8,1]},${AddsArray[9,1]},${AddsArray[10,1]},${AddsArray[11,1]},${AddsArray[12,1]},${AddsArray[13,1]}]}
                         /varcalc i_CorpseCount ${i_CorpseCount}+1
                     }
@@ -5596,7 +5599,7 @@ Sub Main
                 }
                 /echo Pausing for new target. Switch to new target now.
                 /varset t_Wait 30
-                /beep
+                |/beep
                 /while (${t_Wait} && !${i_Flag1}) {
                     /if (${Target.ID} && ${Target.ID}!=${i_Target}) /varset i_Flag1 1
                     /delay 5
@@ -8031,6 +8034,7 @@ Sub Main
             /declare MezAETimer             timer       outer       0
             /declare MezArray[50,3]         string      outer       NULL
             /declare MezBroke               int         outer       0
+            /declare MeleeOOR               int         outer       0
             /declare MezImmuneIDs           string      outer
             /declare MezMobAECount          int         outer       0
             /declare MezMobCount            int         outer       0

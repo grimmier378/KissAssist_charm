@@ -1,2 +1,7 @@
-#Zip releases
-*.zip
+/*
+!.gitignore
+!LICENSE
+!/README.md
+!/KAssist
+!/KAssist/*
+!kisscharm.mac

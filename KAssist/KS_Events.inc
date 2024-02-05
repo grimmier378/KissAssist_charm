@@ -78,7 +78,7 @@
         /if (${EventByPass}==1) /return
         /varset GoMByPass 1
         /varset EventByPass 2
-        /call CombatTargetCheck 1
+        /call CombatTargetCheck 2
         /call DoCharmStuff Event_CharmBroke
         /varset EventByPass 0
         /varset GoMByPass 0
@@ -357,6 +357,21 @@
             /if (${PullWith.Equal[Ranged]} && ${Target.Distance}<=30 && ${Target.LineOfSight}) /varset ToClose 1
         }
         DEBUGN Leave Event_CantHit
+    /return
+| -------------------------------------------------------------------------------------
+| SUB: Event MeleeOOR
+| -------------------------------------------------------------------------------------
+    Sub Event_MeleeOOR
+        |/varset EventFlag 1
+        DEBUGN Event_MeleeOOR
+        | Reset position via stick
+        /if (${Pulling}) {
+            /varset CantHit 1
+            /if (${PullWith.Equal[Ranged]} && ${Target.Distance}<=30 && ${Target.LineOfSight}) /varset ToClose 1
+        } else {
+            /squelch /nav target
+        }
+        DEBUGN Leave Event_MeleeOOR
     /return
 | -------------------------------------------------------------------------------------
 | SUB: Event Missing
@@ -820,12 +835,43 @@
 | SUB: Event CharmBackO - Charmed a mob Back off and reset combat
 | ----------------------------------------------------------------------------
     Sub Event_CharmBackO(string Line)
+        /declare t_Wait      timer local 0
+        /declare i_Target    int   local ${Int[${Target.ID}]}
+        /declare i_Flag1     int   local 0
         /varset EventFlag 1
 		/if (${IAmMA}) {
-			/call Bind_BackOff 1 10
-			/call Bind_BackOff 0 10
-			/call BroadCast g "Reset combat for Charmed Pet"
-		}
+        /call MobRadar los ${MeleeDistance} CombatReset
+            /varset DPSPaused 2
+        |-- Leave Combat
+            /if (${UseMQ2Melee}) /squelch /melee off
+            /squelch /attack off
+            /if (${Stick.Active}) /stick off
+            /if (${IAmMA}) {
+                /if (${Me.Casting.ID}) {
+                    /stopcast
+                    /varset CastResult CAST_CANCELLED
+                }
+        |-- Find New Target
+                /echo Pausing for Charmed target. Switching to new target now.
+                /varset t_Wait 30
+                /while (${t_Wait} && !${i_Flag1}) {
+                    /if (${Target.ID} && ${Target.ID}!=${i_Target}) /varset i_Flag1 1
+                    /delay 5
+                }
+                /if (${i_Flag1}) {
+                    /varset i_Flag1 ${TargetSwitchingOn}
+                    /varset TargetSwitchingOn 1
+                    /call CombatTargetCheck 2
+        |-- Re-Enter Combat
+                    /varset TargetSwitchingOn ${i_Flag1}
+                    /echo Target Switched because of Charmed Pet.
+                } else {
+                    /echo Target NOT Switched. You can always try again.
+                }
+            }
+            /if (${DPSPaused}==2 && ${UseMQ2Melee}) /squelch /melee on
+            /varset DPSPaused 0
+        }
         /doevents flush CharmBackO
     /return
 | ----------------------------------------------------------------------------
