@@ -35,8 +35,21 @@
 | -------------------------------------------------------------------------------------
     Sub DoCharmStuff(string SentFrom)
 		DEBUGN DoCharmStuff: Check for a pet? = ${Me.Pet.ID}
-		/if (${Me.Pet.ID}>0 || !${CharmOn}) /return
-		
+		/if (${Me.Pet.ID} || !${CharmOn}) /return
+        |-- if charm zone is not emptu and we don't have a pet check that we want to Recharm pet and the the zone matches the one we want.
+      /if (${CharmPetZone.NotEqual[null]} && !${Me.Pet.ID}) {
+        /if (${Select[${CharmKeep},1]} && ${CharmPetZone.NotEqual[${Zone.ShortName}]}) {
+            DEBUGN DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it.
+           | /call BroadCast y "DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it."
+            /return
+        }
+        /if (${Select[${CharmKeep},1]} && ${CharmPetZone.Equal[${Zone.ShortName}]} && !${Bool[${Spawn[${CharmPet}].ID}]}) {
+            DEBUGN DoCharmStuff: Charm Pet is Dead! Resetting CharmedPetID 
+            /call BroadCast m "*** Charm Pet is Dead! Resetting CharmedPetID ***"
+            /varset CharmPet 0
+            /varset CharmPetZone null
+        }
+      }
 		/varset PetActiveState 0
         /if (${EventByPass}!=2) {
             /varset EventByPass 1
@@ -69,6 +82,7 @@
 |            /return
 |        }
 		/if (${CharmKeep}==0) /varset CharmPet 0
+
         | CharmOn - 0=Off/1=On
         /for i 1 to ${XSlotTotal}
             /varset skipFlag 0
@@ -219,9 +233,10 @@
 					/call BroadCast g "*** Charm Sucessfull ***"						
 					/varset CharmMobDone 1
 					/squelch /pet back off
-					/if (${CharmKeep}) {
+					/if (${Select[${CharmKeep},1]}) {
                         /varset CharmPet ${Me.Pet.ID}
                         /echo "Charm Pet ID: ${CharmPet}"
+                        /varset CharmPetZone ${Zone.ShortName}
                     }
                     /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Charmed}]}) {
                         | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
@@ -237,14 +252,16 @@
                 |--we're not charming leave
                 /return
             }
-			/if (!${Me.Pet.ID}) {
+			/if (!${Me.Pet.ID} && ${CharmKeep}) {
+                /if (${CharmPetZone.Equal[${Zone.ShortName}]} && ${Bool[${Spawn[${CharmPet}].ID}]}) {
 				/varset PetActiveState 0
 				/call BroadCast g "** CHARM FAIL **"
-				/if (${CharmKeep} && ${i}==${XSlotTotal}) {
+				/if (${Select[${CharmKeep},1]} && ${i}==${XSlotTotal} && ${CharmPetZone.Equal[${Zone.ShortName}]}) {
 					/call BroadCast p "Old pet is Not in Range!"
 				|--	/varset CharmPet 0
 				|--	/echo "CharmPetID: ${CharmPet}"
-				}               
+				}  
+                }             
             }
             /next i
 		DEBUGN DoCharmStuff: Leave
