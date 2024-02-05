@@ -7948,6 +7948,7 @@ Sub Main
             /declare CharmArray[50,3]         string      outer       NULL
             /declare CharmBroke               int         outer       0
             /declare CharmImmuneIDs           string      outer
+            /declare CharmPetZone           string      outer       null
             /declare CharmMobAECount          int         outer       0
 			/declare CharmAEClosest				int			outer 		0
             /declare CharmMobCount            int         outer       0
