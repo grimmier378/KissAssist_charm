@@ -3170,12 +3170,7 @@ Sub Main
 | SUB: Loot Stuff
 | -------------------------------------------------------------------------------------
     Sub LootStuff
-        /if (${LootNScoot}) {
-            /if (${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}) { 
-                /squelch /lua run lootnscoot once
-                /return
-            }
-        }
+
         /if (!${LootOn} || (!${Me.UseAdvancedLooting} && ${AggroTargetID}) || (${IAmMA} && ${AggroTargetID}) || (${DMZ} && ${Me.InInstance}==FALSE) || ${Me.Invis}) /return
         DEBUGN LootStuff: Enter
         /if (${Me.FreeInventory}==0) {
@@ -3192,6 +3187,13 @@ Sub Main
                 /if (${AutoLoot.Active}) /return
             }
             /call UseAdvLoot
+        } else {
+         /if (${LootNScoot}) {
+            /if (${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}) { 
+                /squelch /lua run lootnscoot once
+                /delay 60 ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}
+                /return
+            }
         } else {
             /call LootMobs
         }
@@ -7870,6 +7872,7 @@ Sub Main
             /squelch /alias /debugpull delete
             /squelch /alias /debugrk delete
             /squelch /alias /dpsspam delete
+            /squelch /alias /sellnscoot /lua run lootnscoot sell
             /ini "${IniFileName}" "General" "KissAssistVer" "${MacroVer}"
         }
         DEBUGN Aliases processed
