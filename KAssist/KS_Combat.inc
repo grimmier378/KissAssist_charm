@@ -1022,7 +1022,7 @@
         } else {
             /if (${Spawn[${MyTargetID}].Distance3D}>${MeleeDistance} || ${Spawn[${MyTargetID}].PctHPs}>${AssistAt}) {
                 /if (!${SpamTimer3}) {
-                    /echo Get Combat Position Failed. Target is too far away or Not ready to attack.
+                    |--/echo Get Combat Position Failed. Target is too far away or Not ready to attack.
                     /varset SpamTimer3 50
                 }
             }

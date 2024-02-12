@@ -469,6 +469,7 @@ Sub Main
         } else {
             /call CheckForCombat 1 MainLoop3 0
         }
+       
         /if (${LootOn}) /call LootStuff
         /if (${DebugHeals}) /delay 5
         /delay 1
@@ -3169,6 +3170,12 @@ Sub Main
 | SUB: Loot Stuff
 | -------------------------------------------------------------------------------------
     Sub LootStuff
+        /if (${LootNScoot}) {
+            /if (${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}) { 
+                /squelch /lua run lootnscoot once
+                /return
+            }
+        }
         /if (!${LootOn} || (!${Me.UseAdvancedLooting} && ${AggroTargetID}) || (${IAmMA} && ${AggroTargetID}) || (${DMZ} && ${Me.InInstance}==FALSE) || ${Me.Invis}) /return
         DEBUGN LootStuff: Enter
         /if (${Me.FreeInventory}==0) {
@@ -3206,7 +3213,7 @@ Sub Main
                 /for i 1 to ${MobCount}
                     /varset NMob ${NearestSpawn[${i},npc targetable los radius ${CountRadius} zradius 50 noalert 3].ID}
                     /if (${i}>${XSlotTotal}) /break
-                    /if (${NMob} && (${Spawn[${NMob}].Type.Equal[Corpse]} || !${Spawn[${NMob}].ID}) || ${Spawn[${NMob}].Master}) {
+                    /if (${NMob} && (${Spawn[${NMob}].Type.Equal[Corpse]} || !${Spawn[${NMob}].ID}) || ${Spawn[${NMob}].Master} || ${Spawn[${NMob}].Type.Equal[Chest]}) {
                         |/call RemoveFromArray AddsArray ${Select[${NMob},${AddsArray[1,1]},${AddsArray[2,1]},${AddsArray[3,1]},${AddsArray[4,1]},${AddsArray[5,1]},${AddsArray[6,1]},${AddsArray[7,1]},${AddsArray[8,1]},${AddsArray[9,1]},${AddsArray[10,1]},${AddsArray[11,1]},${AddsArray[12,1]},${AddsArray[13,1]}]}
                         /varcalc i_CorpseCount ${i_CorpseCount}+1
                     }
@@ -3919,6 +3926,7 @@ Sub Main
         DEBUGN CheckStats Enter
         DEBUGN statcheck ${statcheck} charname ${charname} ckclass ${ckclass} stat ${stat} pause ${pause} resume ${resume}
         /if (${Role.Equal[puller]} && ${ChainPull} ) {
+            /call MobRadar xtar ${MeleeDistance} CheckStats
             /call MobRadar los ${MeleeDistance} CheckStats
             /if (${MobCount}>0) {
                 /varset PullHold 1
@@ -6159,6 +6167,7 @@ Sub Main
                 /call LoadIni General MedStop               int         100
                 /call LoadIni General MedCombat             int         0
                 /call LoadIni General LootOn                int         0
+                /call LoadIni General LootNScoot            int         0
                 /call LoadIni General RezAcceptOn           string      1|90
                 /call LoadIni General AcceptInvitesOn       int         1
                 /call LoadIni General GroupWatchOn          string      0
@@ -6176,7 +6185,7 @@ Sub Main
                     } else {
                         /varset CorpseRecoveryOn 2
                     }
-                }
+                }                    
                 /if (${GroupWatchOn.Find[|]}) {
                     /varset GroupWatchPct ${GroupWatchOn.Arg[2,|]}
                     /varset GroupWatchOn ${GroupWatchOn.Arg[1,|]}
@@ -6477,8 +6486,8 @@ Sub Main
 					/call CreateTimersCharm
 						|KissAssist_Info variables
 						/if (!${CharmImmune.Find[null]} && ${CharmImmune.Length}>0) {
-							/squelch /alert clear 4
-							/call AlertAddToList 4 "${CharmImmune}"
+							/squelch /alert clear 5
+							/call AlertAddToList 5 "${CharmImmune}"
 						} else {
 							/varset CharmImmune null
 						}

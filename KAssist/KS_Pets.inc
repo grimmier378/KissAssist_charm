@@ -242,6 +242,7 @@
 
 		}
 		/if (${Me.Pet.ID}) {
+            /if (${Me.Pet.Target.Equal[${MainAssist}]}) /pet back off
             /if (${Select[${Role},puller,pullertank,pettank,pullerpettank]}) {
                 /if (!${ChaseAssist}) {
                     /if (${Me.Pet.Distance}<=${CampRadius}) {
