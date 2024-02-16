@@ -3189,20 +3189,49 @@ Sub Main
             /call UseAdvLoot
         } else {
          /if (${LootNScoot}) {
-            /if (${Bool[!${Lua.Script[lootnscoot].Status}]} || ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}) { 
-                /squelch /lua run lootnscoot once
-                |-- /call BroadCast g "Lootn n Scootn"
-                /if (${Bool[${Lua.Script[lootnscoot].Status.Equal[RUNNING]}]}) {
-                    /delay 60 ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}
-                    /return
-                }
-            }
+            /call LootScoot
         } else {
             /call LootMobs
         }
         /call DoWeMove 0 lootstuff
         DEBUGN LootStuff: Leave
     /return
+|-------------------------------------------------------------------------------------
+Sub LootScoot
+    /declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50]}
+    /if (${Debugloot}) /echo DEBUGLOOT There are ${DeadCount} corpses in range.
+    /if (${Debugloot}) /echo DEBUGLOOT !${LootMobs} || ${SpawnCount[npc radius ${MobsTooClose} zradius 50]} || !${DeadCount} || ${Me.Combat} || !${Me.FreeInventory} || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting})
+    /if (!${LootMobs} || ${SpawnCount[npc radius ${MobsTooClose} zradius 50]} || !${DeadCount} || ${Me.Combat} || !${Me.FreeInventory} || ${Me.XTarget[${AutoHater}].ID} && !${CombatLooting}) /return
+    /declare i int local
+    /declare CorpseList string local
+    /declare CorpseToLoot int local
+    /declare NALZDist float local ${Math.Distance[${Target.Z}:${Me.Z}]}
+    /declare ClosestCorpse int local
+    /declare CorpseCount int local 0
+    /for i 1 to ${DeadCount}
+        /varset ClosestCorpse ${NearestSpawn[${i},corpse radius ${CorpseRadius} zradius 50].ID}
+        /if (!${Spawn[${ClosestCorpse}].Deity.ID}) {
+            /varset CorpseList ${CorpseList}${ClosestCorpse}|
+            /if (!${MasterCorpseList.Find[${ClosestCorpse}]}) /varset MasterCorpseList ${MasterCorpseList}${ClosestCorpse}|
+            /varcalc CorpseCount ${CorpseCount}+1
+        }
+    /next i
+    /if (${Debugloot}) /echo DEBUGLOOT Trying to loot ${CorpseCount} corpses. ID's ${CorpseList}
+    /if (${CorpseCount}>0) {
+        /if (${Bool[!${Lua.Script[lootnscoot].Status}]} || ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}) { 
+                /squelch /lua run lootnscoot once
+                |-- /call BroadCast g "Lootn n Scootn"
+            /if (${Bool[${Lua.Script[lootnscoot].Status.Equal[RUNNING]}]}) {
+                /delay 90 ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}
+                /return
+            }
+        }
+    }
+
+    
+    /if (${Debugloot}) /echo DEBUGLOOT Leave Sub LootScoot
+/return
+
 | -------------------------------------------------------------------------------------
 |   Sub MobRadar
 | -------------------------------------------------------------------------------------
