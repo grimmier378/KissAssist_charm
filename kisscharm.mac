@@ -3188,15 +3188,22 @@ Sub Main
             }
             /call UseAdvLoot
         } else {
-         /if (${LootNScoot}) {
-            /call LootScoot
-        } else {
-            /call LootMobs
+            /if (${LootNScoot}) {
+                /if (${Bool[${Lua.Script[lootnscoot].Status.Equal[EXITED]}]} || !${Bool[${Lua.Script[lootnscoot].Status}]}) {
+                    /squelch /lua run lootnscoot standalone
+                }
+                /if (${Select[${Role},puller,pullertank,hunter,hunterpettank,pullerpettank]}!=0) {
+                    /delay 10
+                }
+            } else {
+                /call LootMobs
         }
         /call DoWeMove 0 lootstuff
         DEBUGN LootStuff: Leave
     /return
 |-------------------------------------------------------------------------------------
+|
+|--------------------------------------------
 Sub LootScoot
     /declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50]}
     /if (${Debugloot}) /echo DEBUGLOOT There are ${DeadCount} corpses in range.
@@ -3208,6 +3215,9 @@ Sub LootScoot
     /declare NALZDist float local ${Math.Distance[${Target.Z}:${Me.Z}]}
     /declare ClosestCorpse int local
     /declare CorpseCount int local 0
+    /if (${Bool[${Lua.Script[lootnscoot].Status.Equal[EXITED]}]} || !${Bool[${Lua.Script[lootnscoot].Status}]}) {
+        /squelch /lua run lootnscoot standalone
+    }
     /for i 1 to ${DeadCount}
         /varset ClosestCorpse ${NearestSpawn[${i},corpse radius ${CorpseRadius} zradius 50].ID}
         /if (!${Spawn[${ClosestCorpse}].Deity.ID}) {
@@ -3218,17 +3228,9 @@ Sub LootScoot
     /next i
     /if (${Debugloot}) /echo DEBUGLOOT Trying to loot ${CorpseCount} corpses. ID's ${CorpseList}
     /if (${CorpseCount}>0) {
-        /if (${Bool[!${Lua.Script[lootnscoot].Status}]} || ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}) { 
-                /squelch /lua run lootnscoot once
-                |-- /call BroadCast g "Lootn n Scootn"
-            /if (${Bool[${Lua.Script[lootnscoot].Status.Equal[RUNNING]}]}) {
-                /delay 90 ${Bool[${Lua.Script[lootnscoot].Status.NotEqual[RUNNING]}]}
-                /return
-            }
-        }
-    }
-
-    
+        /squelch /lootutils loot
+        |/delay 50
+    }    
     /if (${Debugloot}) /echo DEBUGLOOT Leave Sub LootScoot
 /return
 
@@ -7904,7 +7906,8 @@ Sub LootScoot
             /squelch /alias /debugpull delete
             /squelch /alias /debugrk delete
             /squelch /alias /dpsspam delete
-            /squelch /alias /sellnscoot /lua run lootnscoot sell
+            /squelch /alias /sellnscoot /lootutils sell
+            /squelch /alias /sellonce /lua run lootnscoot sell
             /ini "${IniFileName}" "General" "KissAssistVer" "${MacroVer}"
         }
         DEBUGN Aliases processed
