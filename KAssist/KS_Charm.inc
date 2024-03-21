@@ -1,7 +1,7 @@
 |-------------------------------------------------------------------------------------
 |   Sub CharmRadar
 | -------------------------------------------------------------------------------------
-   Sub CharmRadar
+    Sub CharmRadar
         /if ((${DMZ} && ${Me.InInstance}==FALSE && !${CharmOn})) /return
         DEBUGCHARM CharmRadar Enter
         /declare NCMob int local 0
@@ -37,10 +37,10 @@
 		DEBUGN DoCharmStuff: Check for a pet? = ${Me.Pet.ID}
 		/if (${Me.Pet.ID} || !${CharmOn}) /return
         |-- if charm zone is not emptu and we don't have a pet check that we want to Recharm pet and the the zone matches the one we want.
-      /if (${CharmPetZone.NotEqual[null]} && !${Me.Pet.ID}) {
+        /if (${CharmPetZone.NotEqual[null]} && !${Me.Pet.ID}) {
         /if (${Select[${CharmKeep},1]} && ${CharmPetZone.NotEqual[${Zone.ShortName}]}) {
             DEBUGN DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it.
-           | /call BroadCast y "DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it."
+            | /call BroadCast y "DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it."
             /return
         }
         /if (${Select[${CharmKeep},1]} && ${CharmPetZone.Equal[${Zone.ShortName}]} && !${Bool[${Spawn[${CharmPet}].ID}]}) {
@@ -49,7 +49,7 @@
             /varset CharmPet 0
             /varset CharmPetZone null
         }
-      }
+    }
 		/varset PetActiveState 0
         /if (${EventByPass}!=2) {
             /varset EventByPass 1
@@ -93,30 +93,30 @@
                 /delay 3
             }
 			/if ((!(${Me.SpellReady[${CharmSpell}]} || ${Me.AltAbilityReady[${CharmSpell}]})) && !${IAmABard}) {
-               /if (${CharmOn}) {
-                   DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
-                   /return
-              }
-               /while (!(${Me.SpellReady[${CharmSpell}]} || ${Me.AltAbilityReady[${CharmSpell}]})) {
-                   DOPARSE
-                  /delay 3
-				  
-              }
+                /if (${CharmOn}) {
+                    DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
+                    /return
+                }
+                /while (!(${Me.SpellReady[${CharmSpell}]} || ${Me.AltAbilityReady[${CharmSpell}]})) {
+                    DOPARSE
+                    /delay 3
+
+                }
 			} 
 			/if (!${Me.Gem[${CharmSpell}]}) {
-               /if (${CharmOn}) {
+                /if (${CharmOn}) {
                     /MemSpell ${MiscGem} "${CharmSpell}"
                     /delay 150 ${Me.Gem[${MiscGem}].Name.Equal[${CharmSpell}]}
-                   DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
-                   /return
-              }
-         |--     /while (!${Me.Gem[${CharmSpell}]}) {
-         |--         DOPARSE
-         |--        /delay 3
-                DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
-				  /return
-              }
-			} 
+                    DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
+                    /return
+                }
+        |--     /while (!${Me.Gem[${CharmSpell}]}) {
+        |--         DOPARSE
+        |--        /delay 3
+               | DEBUGN ${CharmSpell} state ${Me.SpellReady[${CharmSpell}]} ${Me.AltAbilityReady[${CharmSpell}]} not ready, return
+				|/return
+                | }
+            } 
 
             | Test -> array not empty,
             /if (${CharmArray[${i},1].Equal[NULL]}) {
@@ -241,7 +241,7 @@
                     /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Charmed}]}) {
                         | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
                         /call CombatTargetCheck1 1
-                         |/if (${MedleyOn}) /squelch /medley
+                        |/if (${MedleyOn}) /squelch /medley
                     } else {
                         /call CombatTargetCheck 1
                     }
@@ -310,7 +310,7 @@
                         /varcalc CharmCount[${TimerNum}] ${CharmCount[${TimerNum}]}+1
 						/varcalc CharmTimer${TimerNum} (${Spell[${CharmSpell}].MyDuration.TotalSeconds}*10)*.90
 												
-                       DEBUGN CharmTimer${TimerNum} ${CharmTimer${TimerNum}}
+                        DEBUGN CharmTimer${TimerNum} ${CharmTimer${TimerNum}}
                     } else /if (${Macro.Return.Equal[CAST_RESISTED]} && ${CharmFail}<2) {
                         /call BroadCast g "CHARM Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         /if (${MezDebuffOnResist} && !${Target.Tashed.ID}) {

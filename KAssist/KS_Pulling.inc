@@ -418,8 +418,8 @@
             /if (${PullMoveUse.Equal[advpath]}) {
                 /varset MyTargetID ${PullMob}
                 /varset MyTargetName ${Spawn[${PullMob}].CleanName}
-                /target id ${PullMob}
-                /delay 20 ${Target.ID}==${PullMob}
+                |/target id ${PullMob}
+                |/delay 20 ${Target.ID}==${PullMob}
                 | Is mob really in range. check for spawn lag
                 /if (${Math.Distance[${Spawn[id ${PullMob}].Y},${Spawn[id ${PullMob}].X}:${AdvpathPointY},${AdvpathPointX}]}>${PullRange}) {
                     /call PullIgnoreCheck ${PullMob} a

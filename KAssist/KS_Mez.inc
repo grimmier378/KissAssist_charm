@@ -139,11 +139,11 @@
                 DEBUGMEZ im a bard and stuff, Skip
                 /continue
             }
-            | Test -> is target a giant unmezzable
-            /if (${Spawn[${MezArray[${i},1]}].Body.Name.Equal[Giant]}) {
-                DEBUGMEZ Spawn[MezArray[${i},1]] (${Spawn[${MezArray[${i},1]}].Name} ID:${MezArray[${i},1]}) is a giant, Skip
-                /continue
-            }
+            | | Test -> is target a giant unmezzable
+            | /if (${Spawn[${MezArray[${i},1]}].Body.Name.Equal[Giant]}) {
+            |     DEBUGMEZ Spawn[MezArray[${i},1]] (${Spawn[${MezArray[${i},1]}].Name} ID:${MezArray[${i},1]}) is a giant, Skip
+            |     /continue
+            | }
             | Test -> is target on my mez immune list
             /if (${Alert[4].Size}) {
                 /for j 0 to ${Alert[4].Size}
@@ -401,6 +401,7 @@
                         DEBUGMEZ Cast Resisted ${Macro.Return}
                         /continue
                     } else /if (${Macro.Return.Equal[CAST_IMMUNE]}) {
+                        /call BroadCast g "MEZ IMMUNE -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         /if (!${MezImmuneIDs.Find[|${Target.ID}]}) /call AddMezImmune ${Target.ID}
                         /if (${AAMezImmune}) /call Bind_AddMezImmune ${Target.CleanName}
                         DEBUGMEZ Cast Immune ${Macro.Return}

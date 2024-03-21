@@ -790,7 +790,7 @@
                 } else /if (${Me.CombatAbility[${MashThis}]} && !${Me.CombatAbilityTimer[${MashThis}]} && ${Me.CombatAbilityReady[${MashThis}]} && ${Spell[${MashThis}].EnduranceCost}<${Me.Endurance}) {
                     /disc ${Me.CombatAbility[${Me.CombatAbility[${MashThis}]}].ID}
                     /delay 2
-                   /if (!${Me.CombatAbilityReady[${MashThis}]}) /echo ## Mashing >> ${MashThis} <<
+                    /if (!${Me.CombatAbilityReady[${MashThis}]}) /echo ## Mashing >> ${MashThis} <<
                 } else /if (${Me.Skill[${MashThis}]} && ${Me.AbilityReady[${MashThis}]}) {
                     /doability "${MashThis}"
                     /delay 2
@@ -1086,10 +1086,10 @@
             /return
         } else {
             /if (${Target.ID}!=${TempTargetID}) {
-               /squelch /target clear
-               /delay 10 !${Target.ID}
-               /target id ${TempTargetID}
-               /delay 10 ${Target.ID}
+                /squelch /target clear
+                /delay 10 !${Target.ID}
+                /target id ${TempTargetID}
+                /delay 10 ${Target.ID}
             }
             /if (${XTarAutoSet} && !${Group.Member[${MainAssist}].Index} && !${IAmMA} && !${Me.XTarget[${XTSlot}].ID} && ${Target.Type.NotEqual[PC]}) /xtarget set ${XTSlot} currenttarget
             /varset MyTargetID ${Target.ID}
@@ -1217,14 +1217,14 @@
             /return
         } else {
             /if (${Target.ID}!=${TempTargetID}) {
-               /squelch /target clear
-               /delay 10 !${Target.ID}
-               /target id ${TempTargetID}
-               /delay 10 ${Target.ID}
+                /squelch /target clear
+                /delay 10 !${Target.ID}
+                /target id ${TempTargetID}
+                /delay 10 ${Target.ID}
             }
-           /varset MyTargetID ${Target.ID}
-           /varset MyTargetName ${Target.CleanName}
-           /varset LastTargetID ${MyTargetID}
+            /varset MyTargetID ${Target.ID}
+            /varset MyTargetName ${Target.CleanName}
+            /varset LastTargetID ${MyTargetID}
         }
         DEBUGCOMBAT GetCombatTarget MyTargetName:${MyTargetName} ID:${MyTargetID}
         DEBUGCOMBAT GetCombatTarget Leave
@@ -1246,13 +1246,13 @@
             /if (${Bool[${Target.Charmed}]}) /call MobRadar los ${MeleeDistance} CheckForCombat                
         }
         /if (${SpawnID}) {
-           /varset MobID ${Spawn[${SpawnID}].ID}
-           /varset MobName ${Spawn[${SpawnID}].CleanName}
-           /varset MobType ${Spawn[${SpawnID}].Type}
+            /varset MobID ${Spawn[${SpawnID}].ID}
+            /varset MobName ${Spawn[${SpawnID}].CleanName}
+            /varset MobType ${Spawn[${SpawnID}].Type}
         } else {
-           /varset MobID ${Target.ID}
-           /varset MobName ${Target.CleanName}
-           /varset MobType ${Target.Type}
+            /varset MobID ${Target.ID}
+            /varset MobName ${Target.CleanName}
+            /varset MobType ${Target.Type}
         }
         /if (!${MobID}) /return NoTarget
         DEBUGCOMBAT ValidateTarget Validate 1
@@ -1292,10 +1292,10 @@
             /if (${Spawn[${MobID}].Level}<${PullMin} || ${Spawn[${MobID}].Level}>${PullMax}) /return BadLevel
             /if (${Window[TargetOfTargetWindow].Open} && ${Target.ID}==${MobID}) {
             | - If mob I'm pulling is aggroed already by non damaging spell by someone else.
-               /delay 10 ${Target.ID}==${MobID}
-               /if (${Me.TargetOfTarget.Type.Equal[PC]} && ${Me.TargetOfTarget.Name.NotEqual[${Me}]} && !${Group.Member[${Me.TargetOfTarget.Name}].Index}) /return PullToTTNotPuller
-               /if (${Me.TargetOfTarget.Type.Equal[PET]} && ${Me.TargetOfTarget.Name.NotEqual[${Me.Pet.CleanName}]}) /return PullToTTNotMyPet
-               /if (${Me.TargetOfTarget.Type.Equal[mercenary]} && !${Group.Member[${Me.TargetOfTarget.Name}].Index}) /return PullToTNotMyMerc
+                /delay 10 ${Target.ID}==${MobID}
+                /if (${Me.TargetOfTarget.Type.Equal[PC]} && ${Me.TargetOfTarget.Name.NotEqual[${Me}]} && !${Group.Member[${Me.TargetOfTarget.Name}].Index}) /return PullToTTNotPuller
+                /if (${Me.TargetOfTarget.Type.Equal[PET]} && ${Me.TargetOfTarget.Name.NotEqual[${Me.Pet.CleanName}]}) /return PullToTTNotMyPet
+                /if (${Me.TargetOfTarget.Type.Equal[mercenary]} && !${Group.Member[${Me.TargetOfTarget.Name}].Index}) /return PullToTNotMyMerc
             }
             /if (${DebugPull} && ${MobsToPull.NotEqual[all]}) /echo ValidateTarget ${MobsToPull}
             /if (${MobsToPull.Equal[all]}) {
@@ -1326,14 +1326,8 @@
 | -------------------------------------------------------------------------------------
     Sub CheckBeforeCast(SentFrom)
         /if (${GroupEscapeOn} && ${Select[${Me.Class.ShortName},WIZ,DRU]} && ${Raid.Members}==0 && ${SentFrom.Equal[CombatCast]}) /call GroupEscape
-        /if (${MezOn} && ${SentFrom.Equal[CombatCast]}) {
-            /call MezCheck CheckBeforeCombat
-
-        }
-	    /if (${CharmOn} && ${SentFrom.Equal[CombatCast]}) {
-            /call CharmCheck CheckBeforeCombat
-
-        }
+        /if (${MezOn} && ${SentFrom.Equal[CombatCast]}) /call MezCheck CheckBeforeCombat
+        /if (${CharmOn} && ${SentFrom.Equal[CombatCast]}) /call CharmCheck CheckBeforeCombat
         /if (${CuresOn}) {
             /call CheckCures CheckBeforeCast
         } else /if (${HealsOn}) {
@@ -1653,7 +1647,7 @@
                     /echo Casting >> ${AggroSpell} << to control AGGRO(${AggroGLT}) on ${Spawn[${AggroTID}].CleanName}.
                     /if (${AggroGLT.Equal[>]}) {
                         /if (!${AggroOffTimer}) {
-                           /if (${Me.Feigning} || ${Me.Invis}) /varset AggroOffTimer 20
+                            /if (${Me.Feigning} || ${Me.Invis}) /varset AggroOffTimer 20
                         }
                     }
                     /break
@@ -1742,7 +1736,7 @@
             /varset DebuffTargetID ${Me.XTarget[${j}].ID}
             DEBUGCOMBAT DoDebuffStuff Target: ${DebuffTargetID}=${Target.ID} DebuffAllOn: ${DebuffAllOn} J: ${j}
             /if (${MeleeOn} && ${Me.Combat} && (!${IAmMA} || ${DebuffTargetID}!=${Target.ID})) {
-               /squelch /attack off
+                /squelch /attack off
                 /delay 10 !${Me.Combat}
                 /varset WasAttacking 1
             }
@@ -2200,9 +2194,9 @@
         /declare AbortFlag    int    local 0
         /if (!${BurnActive}) /call BroadCast r "BURN ACTIVATED => Autobots Transform <="
         /if (${UseTribute} && !${Me.TributeActive}) {
-           /squelch /tribute personal on
-           /squelch /trophy personal on
-           /varset TributeTimer 570s
+            /squelch /tribute personal on
+            /squelch /trophy personal on
+            /varset TributeTimer 570s
         }
         /for i 1 to ${Burn.Size}
             /varset BurnSpell ${Burn[${i}].Arg[1,|]}
