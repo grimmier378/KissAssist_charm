@@ -148,7 +148,7 @@
             /if (${Alert[4].Size}) {
                 /for j 0 to ${Alert[4].Size}
                     /if (${Alert[4].List[${j}].Name.Equal[${MezArray[${i},3]}]} && ${Alert[4].List[${j}].Name.Length}) {
-                        /if (${MMTimer${i}}==0) /call BroadCast g "MEZ Immune Detected -> ${MezArray[${i},3]} <- ID:${MezArray[${i},1]}"
+                        /if (${MMTimer${i}}==0) /call broadcast g "[Kiss] MEZ Immune Detected -> ${MezArray[${i},3]} <- ID:${MezArray[${i},1]}"
                         /varset MMTimer${i} 1m
                         DEBUGMEZ ${Spawn[${MezArray[${i},1]}].Name} ID:${MezArray[${i},1]} is immune, Skip
                         /varset skipFlag 1
@@ -262,7 +262,7 @@
             /if (${UseMQ2Melee}) /squelch /melee off
             /squelch /attack off
             /call CastWhat "${MezAESpell}" ${AEMezID} Mez 0 0
-            /call BroadCast g "MEZZING-> AE Mezzing Now - ${MezAESpell} "
+            /call broadcast g "[Kiss] MEZZING-> AE Mezzing Now - ${MezAESpell} "
             /varset MezAETimer 300
         }
         | Enchanter AE mez code
@@ -281,15 +281,15 @@
             /while (!${Me.SpellReady[${MezAESpell}]}) {
                 /delay 2
             }
-            /call BroadCast g "Casting AE Mez-> ${MezAESpell}"
+            /call broadcast g "[Kiss] Casting AE Mez-> ${MezAESpell}"
             /call CastWhat "${MezAESpell}" ${AEMezID} Mez 0 0
             /if (${Select[${Macro.Return},CAST_SUCCESS,CAST_RESISTED,CAST_IMMUNE]}) {
                 /echo I JUST CAST AE MEZ ${MezAESpell}
                 /varset MezAETimer ${Spell[${MezAESpell}].Duration.TotalSeconds}s
                 DEBUGMEZ TIMER SET ${MezAETimer}
-                /call BroadCast g "AE MEZ Complete-> ${MezAESpell}"
+                /call broadcast g "[Kiss] AE MEZ Complete-> ${MezAESpell}"
             } else {
-                /call BroadCast g "AE MEZ ${MezAESpell} Failed -> ${Macro.Return}"
+                /call broadcast g "[Kiss] AE MEZ ${MezAESpell} Failed -> ${Macro.Return}"
                 /varset MezAETimer ${Me.GemTimer[${MezAESpell}].TotalSeconds}s
             }
             /if (${WasChasing}) /varset ChaseAssist 1
@@ -328,9 +328,9 @@
                 }
             }
             /if (${MezCount[${TimerNum}]}<1) {
-                /call BroadCast g "MEZZING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                /call broadcast g "[Kiss] MEZZING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
             } else {
-                /call BroadCast g "ReMEZZING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                /call broadcast g "[Kiss] ReMEZZING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                 /varset ReMez 1
             }
             | Chanter mez code
@@ -340,15 +340,15 @@
                     /varcalc MezFail ${MezFail}+1
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                         /if (!${ReMez}) {
-                            /call BroadCast g "JUST MEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
+                            /call broadcast g "[Kiss] JUST MEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
                         } else {
-                            /call BroadCast g "JUST REMEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
+                            /call broadcast g "[Kiss] JUST REMEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
                         }
                         /varcalc MezCount[${TimerNum}] ${MezCount[${TimerNum}]}+1
                         /varcalc MezTimer${TimerNum} (${Spell[${MezSpell}].MyDuration.TotalSeconds}*10)*.90
                         DEBUGMEZ MezTimer${TimerNum} ${MezTimer${TimerNum}}
                     } else /if (${Macro.Return.Equal[CAST_RESISTED]} && ${MezFail}<2) {
-                        /call BroadCast g "MEZ Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                        /call broadcast g "[Kiss] MEZ Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         | Added for Debuffing Resistant Mobs while Mezzing.
                         /if (${MezDebuffOnResist} && !${Target.Tashed.ID}) {
                             /while (${Me.SpellInCooldown}) {
@@ -356,7 +356,7 @@
                             }
                             /call CastWhat "${MezDebuffSpell}" ${MobID} MezDebuff 0 0
                             /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                                /call BroadCast g "MEZ Debuffed -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                                /call broadcast g "[Kiss] MEZ Debuffed -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                                 /while (${Me.SpellInCooldown}) {
                                     /delay 3
                                 }
@@ -387,9 +387,9 @@
                     /varcalc MezFail ${MezFail}+1
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                         /if (!${ReMez}) {
-                            /call BroadCast g "JUST MEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
+                            /call broadcast g "[Kiss] JUST MEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
                         } else {
-                            /call BroadCast g "JUST REMEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
+                            /call broadcast g "[Kiss] JUST REMEZZED -> ${MezSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
                         }
                         
                         /squelch /target clear
@@ -397,11 +397,11 @@
                         /varcalc MezTimer${TimerNum} (${Spell[${MezSpell}].MyDuration.TotalSeconds}*10)*.90
                         DEBUGMEZ MezTimer${TimerNum} ${MezTimer${TimerNum}} ${Macro.Return}
                     } else /if (${Macro.Return.Equal[CAST_RESISTED]} && ${MezFail}<2) {
-                        /call BroadCast g "MEZ Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                        /call broadcast g "[Kiss] MEZ Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         DEBUGMEZ Cast Resisted ${Macro.Return}
                         /continue
                     } else /if (${Macro.Return.Equal[CAST_IMMUNE]}) {
-                        /call BroadCast g "MEZ IMMUNE -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                        /call broadcast g "[Kiss] MEZ IMMUNE -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         /if (!${MezImmuneIDs.Find[|${Target.ID}]}) /call AddMezImmune ${Target.ID}
                         /if (${AAMezImmune}) /call Bind_AddMezImmune ${Target.CleanName}
                         DEBUGMEZ Cast Immune ${Macro.Return}
@@ -422,7 +422,7 @@
                         DEBUGMEZ MezMobs MezTimer${TimerNum} ${MezTimer${TimerNum}}
                         | Necro flag to release from mez loop since spell has 6 sec refresh.
                     } else /if (${Macro.Return.Equal[CAST_RESISTED]} && ${MezFail}<2) {
-                        /call BroadCast g "MEZ Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                        /call broadcast g "[Kiss] MEZ Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         /continue
                     } else /if (${Macro.Return.Equal[CAST_IMMUNE]}) {
                         /if (!${MezImmuneIDs.Find[|${Target.ID}]}) /call AddMezImmune ${Target.ID}

@@ -440,10 +440,10 @@
             /varcalc ColorIdx ${Select[${Spawn[${PullMob}].ConColor.Replace[ ,_]},grey,green,light_blue,blue,white,yellow,red]}+1
             /varset ConColor ${ColorList.Mid[${ColorIdx},1]}
             /if (${BroadCastSay.Equal[bc]}) {
-                /call BroadCast t "PULLING-> [+${ConColor}+]${Spawn[${PullMob}].CleanName}[+t+] <- ID:${PullMob} at ${Int[${Math.Distance[${Spawn[${PullMob}].Y},${Spawn[${PullMob}].X}:${CampYLoc},${CampXLoc}]}]} feet."
+                /call broadcast t "[Kiss] PULLING-> [+${ConColor}+]${Spawn[${PullMob}].CleanName}[+t+] <- ID:${PullMob} at ${Int[${Math.Distance[${Spawn[${PullMob}].Y},${Spawn[${PullMob}].X}:${CampYLoc},${CampXLoc}]}]} feet."
             } else {
                 /if (${ConColor.EqualCS[W]}) /varset ConColor -${ConColor.Lower}
-                /call BroadCast t "PULLING-> \a${ConColor}${Spawn[${PullMob}].CleanName}\at <- ID:${PullMob} at ${Int[${Math.Distance[${Spawn[${PullMob}].Y},${Spawn[${PullMob}].X}:${CampYLoc},${CampXLoc}]}]} feet."
+                /call broadcast t "[Kiss] PULLING-> \a${ConColor}${Spawn[${PullMob}].CleanName}\at <- ID:${PullMob} at ${Int[${Math.Distance[${Spawn[${PullMob}].Y},${Spawn[${PullMob}].X}:${CampYLoc},${CampXLoc}]}]} feet."
             }
             /varset MyTargetID ${PullMob}
             /varset MyTargetName ${Spawn[${PullMob}].CleanName}
@@ -503,7 +503,7 @@
                     }
                 }
                 /if (${PullWait} && !${AggroTargetID}) {
-                    /call BroadCast t "PULLING-> Waiting ${PullWait} seconds for mobs to respawn."
+                    /call broadcast t "[Kiss] PULLING-> Waiting ${PullWait} seconds for mobs to respawn."
                     /call PullDelay ${PullWait}
                 }
                 /return 0
@@ -609,7 +609,7 @@
             }
         }
         | Check spawn for 100% health
-        /if (${Spawn[${PVPullMob}].PctHPs}<=99 && ${Spawn[${PVPullMob}].Distance}>=${MeleeDistance}) {
+        /if (${Spawn[${PVPullMob}].PctHPs}<=39 && ${Spawn[${PVPullMob}].Distance}>=${MeleeDistance}) {
             DEBUGPULL PullValidate: PFlag: ${PFlag} ${Spawn[${PVPullMob}].CleanName} invalid target Reason: Mob not 100% health ${Spawn[${PVPullMob}].PctHPs}
             | If chain pulling then target mob to update server.
             /if (${PFlag} && ${Spawn[${PVPullMob}].Distance}<=360 && ${Target.ID}!=${PVPullMob}) {
@@ -1748,7 +1748,7 @@
                 DEBUGCHAINPULL Chain Pull Failed 1: ${PullHold} ${MobCount}<2 ${Me.XTarget[${XTSlot2}].ID} ${IsNamed1}
             }
         } else /if (${EchoWaitMessage}) {
-            /call BroadCast r "Holding Pulls. Tank to far from camp."
+            /call broadcast r "[Kiss] Holding Pulls. Tank to far from camp."
             /return W
         }
     /return 0

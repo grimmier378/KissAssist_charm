@@ -24,8 +24,8 @@
         /if (${i_TargetID}!=${Target.ID}) {
             /delay 20 ${Target.BuffsPopulated}
         }
-        /if (${Target.Mezzed.ID}) {
-            /if (${Select[${Role},pettank,pullerpettank,hunterpettank]} && ${PetBreakMezSpell.NotEqual[null]}) /call BreakMez
+        /if (${Target.Mezzed.ID} && ${Select[${Role},pettank,pullerpettank,hunterpettank]}) {
+            /if (${PetBreakMezSpell.NotEqual[null]}) /call BreakMez
         }
         /if (!${Target.Mezzed.ID}) {
             /if (${Select[${Role},pettank,pullerpettank]}) {
@@ -85,7 +85,7 @@
         }
 	}
         /if (${Me.Pet.ID}) /varset PetActiveState 1
-		/if (${Me.Pet.ID} && ${CharmKeep}) /varset CharmPet ${Me.Pet.ID}
+		|/if (${Me.Pet.ID} && ${CharmKeep}) /varset CharmPet ${Me.Pet.ID}
     /return
 | -------------------------------------------------------------------------------------
 | SUB: DoPetStuff
@@ -391,7 +391,7 @@
                 /if (${Defined[PetBuff${i}]}) {
                     /if (${PetBuff${i}}) /continue
                 }
-                /call BroadCast o "PetToysPlease ${Me.Pet.Name}"
+                /call broadcast o "[Kiss] PetToysPlease ${Me.Pet.Name}"
                 /if (!${Defined[PetBuff${i}]}) {
                     /declare PetBuff${i} timer outer 900
                 } else {
@@ -702,7 +702,7 @@
                 DEBUGHEALS DoPetHealStuff (${Me.Pet.PctHPs}<=${SingleHeal[${j}].Arg[2,|]} && ${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range})
                 /call CastWhat "${SingleHeal[${j}].Arg[1,|]}" ${Me.Pet.ID} Heal 0 0
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                    /call BroadCast o "${SingleHeal[${j}].Arg[1,|]} on  >> ${Me.Pet.CleanName} <<"
+                    /call broadcast o "[Kiss] ${SingleHeal[${j}].Arg[1,|]} on  >> ${Me.Pet.CleanName} <<"
                     /varcalc PetHealTimer${j} ${Spell[${SingleHeal[${j}].Arg[1,|]}].MyDuration.TotalSeconds}*10
                     /varset HealAgain    1
                 }

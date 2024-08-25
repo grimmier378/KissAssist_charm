@@ -307,7 +307,7 @@
                 }
                 /call CastWhat "${CuretoCast}" ${CTID} Cure ${CondNo} 0
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                    /call BroadCast o "CURING: >> ${CTName} << with ${CuretoCast}"
+                    /call broadcast o "[Kiss] CURING: >> ${CTName} << with ${CuretoCast}"
                     /varset CureCast 1
                     /if (${HealsOn}) {
                         /call CheckHealth CheckCures

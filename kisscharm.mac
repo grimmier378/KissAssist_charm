@@ -207,6 +207,7 @@
 #bind TooBuffList    /tbmanager
 #bind TrackMeDown    /trackmedown
 #bind WriteMySpells  /writespells
+#bind WriteMyMedley  /writemedley
 #bind ZoneInfo       /zoneinfo
 | -------------------------------------------------------------------------------------
 | SUB: Includes
@@ -885,7 +886,7 @@ Sub Main
                     /if (${Debug} || ${DebugMove}) /echo \atDEBUG ChaseAssist exceed camp check
                     /varset ChaseAssist 0
                     /echo ChaseAssist distance exceeded: Turning off ChaseAssist
-                    /call BroadCast r "Hey! I got left behind please run me to " ${WhoToChase}
+                    /call broadcast r "[Kiss] Hey! I got left behind please run me to " ${WhoToChase}
                     /break
                 }
             } else {
@@ -1063,13 +1064,13 @@ Sub Main
                 }
                 /if (${Medding}) /echo Medding until ${MedStat} ${MedStop}% ${Me.Pct${MedStat}} ${MedStart}
                 /if (${Me.Pct${MedStat}}<${MedStart}) {
-                    /call BroadCast t "My ${MedStat} is ${Me.Pct${MedStat}}% time to med."
+                    /call broadcast t "[Kiss] My ${MedStat} is ${Me.Pct${MedStat}}% time to med."
                 } else /if (${MeddingInterrupted}) {
                     /if (${p_UseFlag}==2) {
                         |"Waiting for >> ${charname} << to med up to ${resume}% ${stat}."
-                        /call BroadCast t "Medding Interrupted. Waiting for >> ${watchName} to med."
+                        /call broadcast t "[Kiss] Medding Interrupted. Waiting for >> ${watchName} to med."
                     } else {
-                        /call BroadCast t "Medding Interrupted. My ${MedStat} is ${Me.Pct${MedStat}}% time to Resume."
+                        /call broadcast t "[Kiss] Medding Interrupted. My ${MedStat} is ${Me.Pct${MedStat}}% time to Resume."
                     }
                 }
                 /if (!${MeddingInterrupted}) {
@@ -1286,7 +1287,7 @@ Sub Main
                                 DEBUGN \amDEBUG DoPetMedStuff (${SingleHeal[${j}].Arg[3,|].Find[PET]} && ${Me.Pet.PctHPs} && ${Me.Pet.ID} && ${Me.Pet.Distance}<${Spell[${SingleHeal[${j}].Arg[1,|]}].Range})
                                 /call CastWhat "${SingleHeal[${j}].Arg[1,|]}" ${Me.Pet.ID} Med 0 0
                                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                                    /call BroadCast o "${Heals[${j}].Arg[1,|]} on  >> ${Me.Pet.CleanName} <<"
+                                    /call broadcast o "[Kiss] ${Heals[${j}].Arg[1,|]} on  >> ${Me.Pet.CleanName} <<"
                                     /varcalc PetHealTimer${j} ${Spell[${SingleHeal[${j}].Arg[1,|]}].MyDuration.TotalSeconds}*10
                                 }
                                 /break
@@ -1512,12 +1513,12 @@ Sub Main
                     /if (${Select[${5thPart},BEGFORITEMS]}>0) {
                         /if (${FindItemCount["=${SpellToCast}"]}<${3rdPart}) {
                             |"#*# KABeg for #1# #2#"
-                            /call BroadCast o "KABeg for ${Me.CleanName} ${5thPart} 0"
+                            /call broadcast o "[Kiss] KABeg for ${Me.CleanName} ${5thPart} 0"
                             /varset Buff${i}GM0 900
                         }
                     } else /if (${Select[${5thPart},BEGFORBUFFS]}>0) {
                         /if (!${Me.Buff[${SpellToCast}].ID}) {
-                            /call BroadCast o "KABeg for ${Me.CleanName} ${5thPart} 0"
+                            /call broadcast o "[Kiss] KABeg for ${Me.CleanName} ${5thPart} 0"
                             /varset Buff${i}GM0 900
                         }
                     } else {
@@ -2668,7 +2669,10 @@ Sub Main
                 /squelch /medley "${MedleyName}" -quiet
             }
         }
-	
+        /if (${CharmOn} && ${Me.Pet.ID}) /call DoPetStuff
+        /if (${PetCombatOn} && ${Me.Pet.ID}) {
+            /if (${Spawn[${MyTargetID}].PctHPs}<=${PetAssistAt} && !${Pet.Combat}) /call CombatPet
+        }
         DEBUGN DoBardStuff: Leave
 	/return
 | ----------------------------------------------------------------------------
@@ -2957,7 +2961,7 @@ Sub Main
                         /delay 10
                         /call CastWhat "${RezWith}" ${Target.ID} RezCheckMA 0 0
                         /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                            /call BroadCast o "REZZING MA =>> ${MainAssist} <<="
+                            /call broadcast o "[Kiss] REZZING MA =>> ${MainAssist} <<="
                             /varset OOCRezTimer${RezID} 1m
                         }
                     }
@@ -2981,7 +2985,7 @@ Sub Main
                         /delay 10
                         /call CastWhat "${RezWith}" ${Target.ID} RezCheckME 0 0
                         /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                            /call BroadCast o "REZZING ME =>> ${Me} <<="
+                            /call broadcast o "[Kiss] REZZING ME =>> ${Me} <<="
                             /varset OOCRezTimer${RezMeID} 1m
                             /varset RezWait 20
                             /while (${CorpseCount}==${SpawnCount[pccorpse ${Me} radius ${RezRadius} zradius 50]} && ${RezWait}) {
@@ -3012,10 +3016,10 @@ Sub Main
                         /call CastWhat "${RezWith}" ${Target.ID} RezCheckG 0 0
                         /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                             /if (${CombatStart}) {
-                                /call BroadCast o "BATTLE REZZED =>> ${Group.Member[${i}]} <<="
+                                /call broadcast o "[Kiss] BATTLE REZZED =>> ${Group.Member[${i}]} <<="
                                 /varset BattleRezTimer${i} 3m
                             } else {
-                                /call BroadCast o "REZZED =>> ${Group.Member[${i}]} <<="
+                                /call broadcast o "[Kiss] REZZED =>> ${Group.Member[${i}]} <<="
                                 /varset BattleRezTimer${i} 1m
                             }
                             /squelch /target clear
@@ -3043,7 +3047,7 @@ Sub Main
                         /delay 10
                         /call CastWhat "${RezWith}" ${Target.ID} RezCheckME 0 0
                         /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                            /call BroadCast o "REZZING ME =>> ${Me} <<="
+                            /call broadcast o "[Kiss] REZZING ME =>> ${Me} <<="
                             /varset OOCRezTimer${RezMeID} 1m
                             /varset RezWait 20
                             /while (${CorpseCount}==${SpawnCount[pccorpse ${Me} radius ${RezRadius} zradius 50]} && ${RezWait}) {
@@ -3090,7 +3094,7 @@ Sub Main
                                 /varset RezName ${Target.CleanName}
                                 /call CastWhat "${RezWith}" ${Target.ID} RezCheckX 0 0
                                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                                    /call BroadCast o "Rezzing =>> ${RezName} <<="
+                                    /call broadcast o "[Kiss] Rezzing =>> ${RezName} <<="
                                     /varset OOCRezTimer${RezID} 3m
                                     /squelch /target clear
                                 }
@@ -3134,7 +3138,7 @@ Sub Main
                                         /call CastWhat "${RezWith}" ${Target.ID} RezCheckA 0 0
                                         /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                                             /varcalc RezCheckTries ${RezCheckTries}+1
-                                            /call BroadCast o "Rezzing =>> ${RezName} for the ${RezCheckTries} Time<<="
+                                            /call broadcast o "[Kiss] Rezzing =>> ${RezName} for the ${RezCheckTries} Time<<="
                                             /varset OOCRezTimer${RezID} 3m
                                             /if (${RezCheck1.NotEqual[null]}) {
                                                 /varset CorpseRezCheck ${CorpseRezCheck.Replace[${RezCheck1}|,${RezCheckID}:${RezCheckTries}|]}
@@ -3985,7 +3989,7 @@ Sub LootScoot
         |    }
         |}
         /if (${Select[${Role},puller,pullertank,hunter,hunterpettank,pullerpettank]}) {
-            /call BroadCast t "Waiting for >> ${charname} << to med up to ${resume}% ${stat}."
+            /call broadcast t "[Kiss] Waiting for >> ${charname} << to med up to ${resume}% ${stat}."
         } else {
             /echo  Waiting for >> ${charname} << to med up to ${resume}% ${stat}.
         }
@@ -3995,7 +3999,7 @@ Sub LootScoot
         /varset Pulling 0
         /call DoWeMed 2 ${Target.ID} "${stat}" ${resume}
         /if (${Select[${Role},puller,pullertank,pullerpettank,hunter,hunterpettank]}) {
-            /call BroadCast t "${charname} is now above ${resume}% ${stat} resuming activity."
+            /call broadcast t "[Kiss] ${charname} is now above ${resume}% ${stat} resuming activity."
         } else {
            /echo ${charname} is now above ${resume}% ${stat} resuming activity.
         }
@@ -4305,7 +4309,7 @@ Sub LootScoot
                 /while (${Posse.Strangers}>=1) {
                     /if (!${holding}) {
                         /echo [AHTools] Macro on hold due to player activity in camp radius.
-                        /call BroadCast r "**PCS DETECTED IN CAMP RADIUS**"
+                        /call broadcast r "[Kiss] **PCS DETECTED IN CAMP RADIUS**"
                         /multiline ; /beep ; /timed 1 /beep ; /timed 1 /beep ; /timed 5 /beep ; /timed 5 /beep ; /timed 5 /beep ; /timed 5 /beep ; /timed 1 /beep ; /timed 1 /beep
                         /varset holding 1
                     }
@@ -4328,7 +4332,7 @@ Sub LootScoot
                     /while (${SpawnCount[GM]}>=1) {
                         /if (!${holding}) {
                             /echo [AHTools] Macro on hold due to GM Presence
-                            /call BroadCast r "** GM DETECTED **"
+                            /call broadcast r "[Kiss] ** GM DETECTED **"
                             /multiline ; /beep ; /timed 1 /beep ; /timed 1 /beep ; /timed 5 /beep ; /timed 5 /beep ; /timed 5 /beep ; /timed 5 /beep ; /timed 1 /beep ; /timed 1 /beep
                             /varset holding 1
                         }
@@ -5833,12 +5837,37 @@ Sub LootScoot
         /if (${Select[${Me.Class.ShortName},BER,MNK,ROG,WAR]}) /return
         /varcalc GemSlots ${Int[${Me.AltAbility[Mnemonic Retention].Rank}]}+8
         /declare i int local
-        /if (${IAmABard}) /call BroadCast g "***Writing songs to: ${EverQuest.Server}_${Me.CleanName}.ini ***"
+        /if (${IAmABard}) /call broadcast g "[Kiss] ***Writing songs to: ${EverQuest.Server}_${Me.CleanName}.ini ***"
                 /for i 1 to ${GemSlots}
             /if (!${Quite}) /echo Gem ${i}: ${Me.Gem[${i}].Name}
             /ini "${IniFileName}" "Spells" "Gem${i}" "${Me.Gem[${i}].Name}"
             /if (${IAmABard}) {                
                 /ini "${EverQuest.Server}_${Me.CleanName}.ini" "Gems-Ref" "Gem${i}" "${Me.Gem[${i}].Name}"
+                |/ini "${EverQuest.Server}_${Me.CleanName}.ini" "MQ2Medley-KissTest" "Song${i}" "${Me.Gem[${i}].Name}^${Me.Gem[${i}].Duration}"
+            }
+        /next i
+    /return
+| -------------------------------------------------------------------------------------
+| SUB: Bind WriteMyMedley
+| -------------------------------------------------------------------------------------
+    Sub Bind_WriteMyMedley(int Quite)
+        /if (!${IAmABard}) /return
+        /varcalc GemSlots ${Int[${Me.AltAbility[Mnemonic Retention].Rank}]}+8
+        /declare i int local
+        /declare dur int Local
+        /declare beni bool Local
+        /declare cond string local "$""{""Me.CombatState.Equal""[""COMBAT""]""}"
+        /if (${IAmABard}) /call broadcast g "[Kiss] ***Writing Medley-Kiss to: ${EverQuest.Server}_${Me.CleanName}.ini ***"
+        /for i 1 to ${GemSlots}
+           | /if (!${Quite}) /echo Gem ${i}: ${Me.Gem[${i}].Name}
+            /varset beni ${Me.Gem[${i}].Beneficial}
+            
+            /varcalc dur ${Me.Gem[${i}].Duration}*6
+           | /echo dur: ${dur}
+            /if (!${beni}) {
+                /ini "${EverQuest.Server}_${Me.CleanName}.ini" "MQ2Medley-KissTest" "Song${i}" "${Me.Gem[${i}].Name}|${dur}"
+            } else {
+                /ini "${EverQuest.Server}_${Me.CleanName}.ini" "MQ2Medley-KissTest" "Song${i}" "${Me.Gem[${i}].Name}|${dur}|${cond}"
             }
         /next i
     /return
@@ -6737,7 +6766,7 @@ Sub LootScoot
                     /call AssignGroupRole unset "${Group.MasterLooter.Name}" 5
                     /delay 30 !${Group.MasterLooter.Name.Length}
                     /call AssignGroupRole set "${Group.MainAssist.Name}" 5
-                    /call BroadCast r "Assigning ${Me} as Master Looter in Group Window"
+                    /call broadcast r "[Kiss] Assigning ${Me} as Master Looter in Group Window"
                     /varset LooterAssigned 1
                     /return
                 }
@@ -6762,7 +6791,7 @@ Sub LootScoot
                         /if (${Group.MasterLooter.Name.Length} && ${Group.MasterLooter.Name.NotEqual[${Spawn[id ${IniID} group pc].CleanName}]}) /call AssignGroupRole unset "${Group.MasterLooter.Name}" 5
                         /delay 30 !${Group.MasterLooter.Name.Length}
                         /call AssignGroupRole set "${Spawn[id ${IniID} group pc].CleanName}" 5
-                        /call BroadCast r "LOOT: Assigning ${Spawn[id ${IniID} group pc].CleanName} as Master Looter in Group Window"
+                        /call broadcast r "[Kiss] LOOT: Assigning ${Spawn[id ${IniID} group pc].CleanName} as Master Looter in Group Window"
                         /varset LooterAssigned 1
                         /return
                     }
@@ -7008,7 +7037,7 @@ Sub LootScoot
                 /if (!${Target.ID} || ${Target.ID}!=${int_summonID}) /squelch /target id ${int_summonID}
                 /call CastWhat "${str_useWhat}" ${int_summonID} summoncorpse-nomem 0 0
                 /if (${Macro.Return.Equal[cast_success]}) {
-                    /call BroadCast r "Summoned Corpse for: ${Spawn[ID ${int_summonID}].CleanName} Using: ${str_useWhat}"
+                    /call broadcast r "[Kiss] Summoned Corpse for: ${Spawn[ID ${int_summonID}].CleanName} Using: ${str_useWhat}"
                     /varset str_Status true
                     /delay 20
                 } else {
@@ -7757,21 +7786,21 @@ Sub LootScoot
         /squelch /assist off
         /if (${Role.Find[pull]} || ${Role.Find[hunt]}) {
             /if (${PullPathWpCount} && ${PullMoveUse.Equal[advpath]}) {
-                /call BroadCast r "PULL: Path >> ${PullPath} <<  found with ${PullPathWpCount} waypoints."
-                /call BroadCast r "PULL: Using MQ2AdvPath to Pull with."
+                /call broadcast r "[Kiss] PULL: Path >> ${PullPath} <<  found with ${PullPathWpCount} waypoints."
+                /call broadcast r "[Kiss] PULL: Using MQ2AdvPath to Pull with."
             } else /if (${Bool[${Plugin[MQ2Nav]}]}) {
                 /if (${Navigation.MeshLoaded}) {
                     | Set pullmoveuse to nav if mq2nav is detected without a mq2advpath path
                     /varset PullMoveUse nav
-                    /call BroadCast r "PULL: The MQ2Nav mesh for ${Zone} is loaded"
-                    /call BroadCast r "PULL: Using MQ2Nav to Pull with ${PullWith}"
+                    /call broadcast r "[Kiss] PULL: The MQ2Nav mesh for ${Zone} is loaded"
+                    /call broadcast r "[Kiss] PULL: Using MQ2Nav to Pull with ${PullWith}"
                 } else {
                     /varset PullMoveUse los
-                    /call BroadCast r "PULL: Using Line of Sight to Pull with ${PullWith}"
+                    /call broadcast r "[Kiss] PULL: Using Line of Sight to Pull with ${PullWith}"
                 }
             } else {
                 /varset PullMoveUse los
-                /call BroadCast r "PULL: Using Line of Sight to Pull with ${PullWith}"
+                /call broadcast r "[Kiss] PULL: Using Line of Sight to Pull with ${PullWith}"
             }
         } else {
             /if (${Bool[${Plugin[MQ2Nav]}]}) {
@@ -7805,10 +7834,10 @@ Sub LootScoot
                 }
                 /if (!${Group.MainAssist.Name.Length}) {
                     /if (${Spawn[${MainAssist}].Type.Equal[pet]}) {
-                        /call BroadCast r "Assigning ${Spawn[${MainAssist}].Master.CleanName} as Main Assist in Group Window"
+                        /call broadcast r "[Kiss] Assigning ${Spawn[${MainAssist}].Master.CleanName} as Main Assist in Group Window"
                         /call AssignGroupRole set "${Spawn[${MainAssist}].Master.CleanName}" 2
                     } else {
-                        /call BroadCast r "Assigning ${MainAssist} as Main Assist in Group Window"
+                        /call broadcast r "[Kiss] Assigning ${MainAssist} as Main Assist in Group Window"
                         /call AssignGroupRole set "${MainAssist}" 2
                     }
                 }

@@ -44,7 +44,7 @@
         /declare i int local
         /varset EventFlag 1
         DEBUGMEZ event charmbroke Enter - ${charmspell} ${charmmob} ${MyTargetID}
-                /call BroadCast g ">> CharmBreak - ${Spawn[=${charmmob}].CleanName} << has awakened from Charm -> ${charmspell}<- ${MyTargetName}"
+                /call broadcast g "[Kiss] >> CharmBreak - ${Spawn[=${charmmob}].CleanName} << has awakened from Charm -> ${charmspell}<- ${MyTargetName}"
         /if (!${CharmOn}) /return
         | Get out of here. DoCharmStuff triggered this call after being called from here. See Below.
         /if (${EventByPass}==2) /return
@@ -52,7 +52,7 @@
                 /varset MyTargetID ${Target.ID}
                 /varset MyTargetName ${Target.CleanName}
             } else {
-                /call BroadCast g ">> CharmBreak - ${Spawn[=${charmmob}].CleanName} << has awakened -> ${charmspell}<- ${MyTargetName}"
+                /call broadcast g "[Kiss] >> CharmBreak - ${Spawn[=${charmmob}].CleanName} << has awakened -> ${charmspell}<- ${MyTargetName}"
                 /for i 1 to 30
                     DEBUGMEZ ${CharmArray[${i},3]} - ${CharmArray[${i},1]} - ${CharmArray[${i},2]}
                     /if (${CharmArray[${i},3].Equal[${charmmob}]} && ${CharmArray[${i},1].NotEqual[null]} && ${CharmArray[${i},2]}!=${MyTargetID}) {
@@ -104,7 +104,7 @@
                 /varset MyTargetID ${Target.ID}
                 /varset MyTargetName ${Target.CleanName}
             } else {
-                /call BroadCast g ">> MainAssist - ${Spawn[=${mezbreaker}].CleanName} << has awakened -> ${mezmob}<- ${MyTargetName}"
+                /call broadcast g "[Kiss] >> MainAssist - ${Spawn[=${mezbreaker}].CleanName} << has awakened -> ${mezmob}<- ${MyTargetName}"
                 /for i 1 to 30
                     DEBUGMEZ ${MezArray[${i},3]} - ${MezArray[${i},1]} - ${MezArray[${i},2]}
                     /if (${MezArray[${i},3].Equal[${mezmob}]} && ${MezArray[${i},1].NotEqual[null]} && ${MezArray[${i},1]}!=${MyTargetID}) {
@@ -119,10 +119,10 @@
         }
         /if (${Spawn[${MainAssist}].Type.Equal[pet]} && ${Spawn[${MainAssist}].Master.CleanName.Equal[${mezbreaker}]}) /return
         /if (${Spawn[=${mezbreaker}].CleanName.Equal[${Me.CleanName}]}) {
-            /call BroadCast y "****Opps! I BROKE MY OWN MEZ on: **** ${mezmob}<- My Target: ${MyTargetName}"
+            /call broadcast y "[Kiss] ****Opps! I BROKE MY OWN MEZ on: **** ${mezmob}<- My Target: ${MyTargetName}"
             |--/beep
         } else {
-            /call BroadCast g ">> ${Spawn[=${mezbreaker}].CleanName} << has awakened -> ${mezmob}<- ${MyTargetName}"
+            /call broadcast g "[Kiss] >> ${Spawn[=${mezbreaker}].CleanName} << has awakened -> ${mezmob}<- ${MyTargetName}"
         }
         /for i 1 to 30
             DEBUGMEZ ${MezArray[${i},3]} - ${MezArray[${i},1]}
@@ -159,7 +159,7 @@
             /varset ImmuneAdd ${ImmuneAdd},${Spawn[${MezID}].CleanName}
         }
         /if (!${MezImmune.Find[${Spawn[${MezID}].CleanName}]}) /ini "${InfoFileName}" "${Zone}${If[${Me.InInstance},_I,]}" "MezImmune" "${ImmuneAdd}"
-        /call BroadCast g "MEZ Immune -> ${Spawn[${MezID}].CleanName} <- ID:${MezID} Adding to MezImmune list."
+        /call broadcast g "[Kiss] MEZ Immune -> ${Spawn[${MezID}].CleanName} <- ID:${MezID} Adding to MezImmune list."
         | Reassign mezimmune var the new list
         /varset MezImmune ${ImmuneAdd}
     /return
@@ -178,7 +178,7 @@
             /varset ImmuneAdd ${ImmuneAdd},${Spawn[${CharmID}].CleanName}
         }
         /if (!${CharmImmune.Find[${Spawn[${CharmID}].CleanName}]}) /ini "${InfoFileName}" "${Zone}${If[${Me.InInstance},_I,]}" "CharmImmune" "${ImmuneAdd}"
-        /call BroadCast g "Charm Immune -> ${Spawn[${CharmID}].CleanName} <- ID:${CharmID} Adding to CharmImmune list."
+        /call broadcast g "[Kiss] Charm Immune -> ${Spawn[${CharmID}].CleanName} <- ID:${CharmID} Adding to CharmImmune list."
         | Reassign mezimmune var the new list
         /varset CharmImmune ${ImmuneAdd}
     /return
@@ -189,7 +189,7 @@
         /if (${Select[${Me.Class.ShortName},Brd,Enc,Nec]}==0) /return
         /if (${MezImmuneIDs.Find[|${MezID}]}) /return
         /varset MezImmuneIDs ${MezImmuneIDs}|${MezID}
-        /call BroadCast g "MEZ Immune -> ${Spawn[${MezID}].CleanName} <- ID:${MezID} Skipping."
+        /call broadcast g "[Kiss] MEZ Immune -> ${Spawn[${MezID}].CleanName} <- ID:${MezID} Skipping."
     /return
 | -------------------------------------------------------------------------------------
 | SUB: Bind AddMezImmune
@@ -238,7 +238,7 @@
         /if (${Select[${Me.Class.ShortName},Brd,Enc,Nec]}==0) /return
         /if (${CharmImmuneIDs.Find[|${CharmID}]}) /return
         /varset CharmImmuneIDs ${CharmImmuneIDs}|${CharmID}
-        /call BroadCast g "CHARM Immune -> ${Spawn[${CharmID}].CleanName} <- ID:${CharmID} Skipping."
+        /call broadcast g "[Kiss] CHARM Immune -> ${Spawn[${CharmID}].CleanName} <- ID:${CharmID} Skipping."
     /return
 | -------------------------------------------------------------------------------------
 | SUB: Bind AddCharmImmune
@@ -610,7 +610,7 @@
 | ----------------------------------------------------------------------------
     Sub Event_TaskUpdate(Line,name)
         /varset EventFlag 1
-        /call BroadCast t "Task updated...(${name})"
+        /call broadcast t "[Kiss] Task updated...(${name})"
     /return
 | ----------------------------------------------------------------------------
 | SUB: Event Gain Something - EQBC message
@@ -761,7 +761,7 @@
         /varset EventFlag 1
         /if (${GUName.Equal[${Me.CleanName}]}) /return
         /if (${Macro.IsTLO[EQBC]}) {
-            /if (${EQBC.Connected} && ${Select[${EQBCOn},2,4]}) /call BroadCast p "${GUName} tells Guild: ${GUText} "
+            /if (${EQBC.Connected} && ${Select[${EQBCOn},2,4]}) /call broadcast p "[Kiss] ${GUName} tells Guild: ${GUText} "
         }
     /return
 | ----------------------------------------------------------------------------
@@ -771,7 +771,7 @@
         /varset EventFlag 1
         /if (${FSName.Equal[${Me.CleanName}]}) /return
         /if (${Macro.IsTLO[EQBC]}) {
-            /if (${EQBC.Connected} && ${Select[${EQBCOn},3,4]}) /call BroadCast p "${FSName} tells Fellowship: ${FSText} "
+            /if (${EQBC.Connected} && ${Select[${EQBCOn},3,4]}) /call broadcast p "[Kiss] ${FSName} tells Fellowship: ${FSText} "
         }
     /return
 | ----------------------------------------------------------------------------
@@ -890,9 +890,9 @@
         /declare WOSpellTT string local 0
         /declare WOTries int local 0
         /declare WOMessage int local 0
-		|/call BroadCast o "Charm On ${CharmOn} Charm SPELL ${CharmSpell} and wornoff spell ${wospell}"
+		|/call broadcast o "[Kiss] Charm On ${CharmOn} Charm SPELL ${CharmSpell} and wornoff spell ${wospell}"
 		|/if (${CharmOn} && ${Spell[${wospell}]}==${Spell[${CharmSpell}]}) {
-		|/call BroadCast y "Charm SPELL ${CharmSpell} and wornoff spell ${wospell}"
+		|/call broadcast y "[Kiss] Charm SPELL ${CharmSpell} and wornoff spell ${wospell}"
 		|/varset EventFlag 1
 		|/doevents CharmBroke ${Line} ${wospell} ${wotarget} Event_WornOff		
 		|} 

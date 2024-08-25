@@ -59,15 +59,15 @@
                 /varset CombatStart 1
                 /echo  ATTACKING -> ${Spawn[${MyTargetID}].CleanName} <-
                 /if (${IAmABard}) /call DoBardStuff
-                /if (${Select[${Role},Tank,PullerTank,Hunter]}) /call BroadCast y "TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
-                /if (${Select[${Role},petTank,pullerpettank,hunterpettank]}) /call BroadCast y "${Me.Pet.CleanName} is TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
+                /if (${Select[${Role},Tank,PullerTank,Hunter]}) /call broadcast y "[Kiss] TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
+                /if (${Select[${Role},petTank,pullerpettank,hunterpettank]}) /call broadcast y "[Kiss] ${Me.Pet.CleanName} is TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
                 | Moloing as as puller turn off puller tag in group so tank merc attacks and doesn't wait for me to get 2 feet near them.
                 /if (${Group}==1 && ${Select[${Role},puller]} && ${Group.Puller.Name.Equal[${Me}]} && ${Spawn[=${MainAssist}].Type.Equal[Mercenary]} && ${Math.Distance[${CampYLoc},${CampXLoc}]}<${CampRadius}) /call AssignGroupRole unset "${Me.CleanName}" 3
                 /if (!${Spawn[${MyTargetID}].LineOfSight} && ${Role.Find[hunter]}) /call GetCombatPosition 1
             }
             /if (${FaceMobOn} && ${Target.ID} && (${Me.Standing} || ${Me.Mount.ID})) /face ${If[${FaceMobOn}==1,fast nolook,nolook]}
             /if (!${Me.FeetWet}) /look 0
-            /if (!${Attacking}) {
+            |/if (!${Attacking}) {
                 /if (${MeleeOn}) {
                     /varset Attacking 1
                     /if (${Me.Sitting}) /stand
@@ -97,7 +97,7 @@
                         }
                     }
                 }
-            }
+            |}
             /varset  MyExp ${Me.PctExp}
             /varset  MyAAExp ${Me.PctAAExp}
             | Turn on check for mez mob in camp that has been mem blurred if i am a tank type
@@ -335,9 +335,9 @@
                             /varset MyTargetID ${Target.ID}
                             /varset MyTargetName ${Target.CleanName}
                             /if (${Select[${Role},Tank,PullerTank,Hunter]}) {
-                                /call BroadCast y "TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
+                                /call broadcast y "[Kiss] TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
                             } else /if (${Select[${Role},petTank,pullerpettank,hunterpettank]}) {
-                                /call BroadCast y "${Me.Pet.CleanName} is TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
+                                /call broadcast y "[Kiss] ${Me.Pet.CleanName} is TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
                             }
                         }
                     } else {
@@ -413,9 +413,9 @@
         |        /echo I am MA, and I switched to new Target.
         |        /varset MyTargetID ${Target.ID}
         |        /if (${Select[${Role},Tank,PullerTank,Hunter]}) {
-        |            /call BroadCast y "TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
+        |            /call broadcast y "[Kiss] TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
         |        } else /if (${Select[${Role},petTank,pullerpettank,hunterpettank]}) {
-        |            /call BroadCast y "${Me.Pet.CleanName} is TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
+        |            /call broadcast y "[Kiss] ${Me.Pet.CleanName} is TANKING-> ${Spawn[${MyTargetID}].CleanName} <- ID:${MyTargetID}"
         |        }
         |    }
         }
@@ -1139,7 +1139,7 @@
                     /delay 10 ${Target.ID}==${TempTargetID}
                 } else /if (${Alert[4].Size} && ${Spawn[xtarhater alert 4].ID} && ${Spawn[xtarhater alert 4].Type.NotEqual[Corpse]}) {
                     /varset TempTargetID ${NearestSpawn[1, xtarhater alert 4].ID}
-                    /call BroadCast y "Grabbing MEZ Immune -> ${Spawn[${TempTargetID}].Name} <- ID:${Spawn[${TempTargetID}].ID} "
+                    /call broadcast y "[Kiss] Grabbing MEZ Immune -> ${Spawn[${TempTargetID}].Name} <- ID:${Spawn[${TempTargetID}].ID} "
                     /squelch /target id ${TempTargetID}
                     /delay 10 ${Target.ID}==${TempTargetID}
                 } else {
@@ -1188,7 +1188,7 @@
                     /varset MezMobFlag 0
                     /delay 30 ${Target.ID}==${BlurredMobID} && ${Target.BuffsPopulated}
                     /if (${Target.Mezzed.ID}) {
-                        /call BroadCast y "Found Mezzed Mob: ${Spawn[${BlurredMobID}].CleanName} <- ID:${BlurredMobID}"
+                        /call broadcast y "[Kiss] Found Mezzed Mob: ${Spawn[${BlurredMobID}].CleanName} <- ID:${BlurredMobID}"
                         /echo MEZ >> Found a Mezzed mob in Camp. <<
                         /varset AggroTargetID2 ${BlurredMobID}
                         /varset MyTargetID ${Target.ID}
@@ -1375,10 +1375,10 @@
             } else {
                 /echo \aw DPS Meter - \ay Your Total Damage: \at ${DPSAdv.MyDamage.Prettify} - \ay Fight Time: \aw ${DPSAdv.TimeElapsed}s - \ay DPS: \ag ${DPSAdv.MyDPS.Prettify}
                 /if (!${DPSAdv.PetDamage}) {
-                    /call BroadCast r "${Me}'s DPS: ${DPSAdv.MyDPS.Prettify}"
+                    /call broadcast r "[Kiss] ${Me}'s DPS: ${DPSAdv.MyDPS.Prettify}"
                 } else {
                     /echo \aw DPS Meter - \ay Pet Total Damage: \at ${DPSAdv.PetDamage.Prettify} \ay - Pet DPS: \ag ${DPSAdv.PetDPS.Prettify}
-                    /call BroadCast r "${Me}'s DPS: ${DPSAdv.MyDPS.Prettify} + Pet = Total: ${DPSAdv.TotalDPS.Prettify}"
+                    /call broadcast r "[Kiss] ${Me}'s DPS: ${DPSAdv.MyDPS.Prettify} + Pet = Total: ${DPSAdv.TotalDPS.Prettify}"
                     /echo \aw DPS Meter - \ay You + Pet Total Damage: \at ${DPSAdv.TotalDamage.Prettify} \ay - DPS: \ag ${DPSAdv.TotalDPS.Prettify}
                 }
                 /popup Total Damage: ${DPSAdv.TotalDamage.Prettify} - Fight Time: ${DPSAdv.TimeElapsed}s - DPS: ${DPSAdv.TotalDPS.Prettify}
@@ -1570,7 +1570,7 @@
         | Spam Adds in camp
         /if (${AggroTargetID} && ${Spawn[${AggroTargetID}].Distance}<=${CampRadius} && !${MyTargetID} && !${AddSpam}) {
             /popup Add(s) in camp detected
-            /if (${IAmMA} || ${Select[${Role},tank,pullertank,pettank,pullerpettank]}) /call BroadCast r "Add(s) in camp detected"
+            /if (${IAmMA} || ${Select[${Role},tank,pullertank,pettank,pullerpettank]}) /call broadcast r "[Kiss] Add(s) in camp detected"
             /if (${Select[${Role},pullertank,pullerpettank]}) /varset Pulled 0
             /varset AddSpam 5s
         }
@@ -2004,16 +2004,16 @@
                 /call CastWhat "${DebuffText}" ${DebuffTargetID} DebuffCast 0 0
                 DEBUGCOMBAT DebuffCast: Return From CastWhat: ${Macro.Return}
                 /if (${Macro.Return.Equal[CAST_RESISTED]}) {
-                    /call BroadCast r "** ${DebuffText} on >> ${Spawn[${DebuffTargetID}].CleanName} << - RESISTED"
+                    /call broadcast r "[Kiss] ** ${DebuffText} on >> ${Spawn[${DebuffTargetID}].CleanName} << - RESISTED"
                 } else /if (${Macro.Return.Equal[CAST_TAKEHOLD]}) {
-                    /call BroadCast r "** ${DebuffText} on >> ${Spawn[${DebuffTargetID}].CleanName} << - DID NOT TAKE HOLD"
+                    /call broadcast r "[Kiss] ** ${DebuffText} on >> ${Spawn[${DebuffTargetID}].CleanName} << - DID NOT TAKE HOLD"
                     /varset TempTimer 3m
                 } else /if (${Macro.Return.Equal[CAST_IMMUNE]}) {
-                    /call BroadCast g "** ${Spawn[${DebuffTargetID}].CleanName} is IMMUNE to - ${DebuffText}"
+                    /call broadcast g "[Kiss] ** ${Spawn[${DebuffTargetID}].CleanName} is IMMUNE to - ${DebuffText}"
                     /if (!${DBOList${i}.Find[|${DebuffTargetID}]}) /varset DBOList${i} ${DBOList${i}}|${DebuffTargetID}
                     /varset TempTimer 3m
                 } else /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                    /call BroadCast o "** Debuffing: ==> ${DebuffText} on >> ${Spawn[${DebuffTargetID}].CleanName}"
+                    /call broadcast o "[Kiss] ** Debuffing: ==> ${DebuffText} on >> ${Spawn[${DebuffTargetID}].CleanName}"
                     /if (!${DBOList${i}.Find[|${DebuffTargetID}]}) /varset DBOList${i} ${DBOList${i}}|${DebuffTargetID}
                     | Timers for items
                     /if (${FindItemCount[=${DebuffText}]}) {
@@ -2192,7 +2192,7 @@
         /declare BurnArg3     string local
         /declare CondNo       int    local 0
         /declare AbortFlag    int    local 0
-        /if (!${BurnActive}) /call BroadCast r "BURN ACTIVATED => Autobots Transform <="
+        /if (!${BurnActive}) /call broadcast r "[Kiss] BURN ACTIVATED => Autobots Transform <="
         /if (${UseTribute} && !${Me.TributeActive}) {
             /squelch /tribute personal on
             /squelch /trophy personal on

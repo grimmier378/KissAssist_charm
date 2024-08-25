@@ -38,18 +38,18 @@
 		/if (${Me.Pet.ID} || !${CharmOn}) /return
         |-- if charm zone is not emptu and we don't have a pet check that we want to Recharm pet and the the zone matches the one we want.
         /if (${CharmPetZone.NotEqual[null]} && !${Me.Pet.ID}) {
-        /if (${Select[${CharmKeep},1]} && ${CharmPetZone.NotEqual[${Zone.ShortName}]}) {
-            DEBUGN DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it.
-            | /call BroadCast y "DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it."
-            /return
+            /if (${Select[${CharmKeep},1]} && ${CharmPetZone.NotEqual[${Zone.ShortName}]}) {
+                DEBUGN DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it.
+                | /call broadcast y "[Kiss] DoCharmStuff: Charm Pet not in: ${Zone.ShortName} go to: ${CharmPetZone} to find it."
+                /return
+            }
+            /if (${Select[${CharmKeep},1]} && ${CharmPetZone.Equal[${Zone.ShortName}]} && !${Bool[${Spawn[${CharmPet}].ID}]}) {
+                DEBUGN DoCharmStuff: Charm Pet is Dead! Resetting CharmedPetID 
+                /call BroadCast m "*** Charm Pet is Dead! Resetting CharmedPetID ***"
+                /varset CharmPet 0
+                /varset CharmPetZone null
+            }
         }
-        /if (${Select[${CharmKeep},1]} && ${CharmPetZone.Equal[${Zone.ShortName}]} && !${Bool[${Spawn[${CharmPet}].ID}]}) {
-            DEBUGN DoCharmStuff: Charm Pet is Dead! Resetting CharmedPetID 
-            /call BroadCast m "*** Charm Pet is Dead! Resetting CharmedPetID ***"
-            /varset CharmPet 0
-            /varset CharmPetZone null
-        }
-    }
 		/varset PetActiveState 0
         /if (${EventByPass}!=2) {
             /varset EventByPass 1
@@ -65,6 +65,12 @@
             /varset GoMByPass 0
         }
         /varset GoMByPass 0
+        /if (${CharmPet}!=0 && ${CharmKeep}==0) {
+            DEBUGN DoCharmStuff: Charm Broke
+            /call broadcast g "[Kiss] *** Charm BROKE!! ***"
+            /varset CharmPet 0
+            /varset CharmPetZone null
+        }
         /if (!${CharmOn} || ${Me.Hovering} || (!${MyTargetID} && ${Spawn[=${MainAssist}].ID} && ${Spawn[=${MainAssist}].Type.NotEqual[Mercenary]}) || ${Me.Pet.ID}>0 || ${DMZ} && ${Me.InInstance}==FALSE) /return
         DEBUGN DoCharmStuff: Enter ${SentFrom}
         /declare i int local 0
@@ -81,7 +87,7 @@
 |            /varset CharmMobDone 1
 |            /return
 |        }
-		/if (${CharmKeep}==0) /varset CharmPet 0
+		|/if (${CharmKeep}==0) /varset CharmPet 0
 
         | CharmOn - 0=Off/1=On
         /for i 1 to ${XSlotTotal}
@@ -174,7 +180,7 @@
             /if (${Alert[4].Size}) {
                 /for j 0 to ${Alert[4].Size}
                     /if (${Alert[4].List[${j}].Name.Equal[${CharmArray[${i},3]}]} && ${Alert[4].List[${j}].Name.Length}) {
-                        /if (${CMTimer${i}}==0) /call BroadCast g "Charm Immune Detected -> ${CharmArray[${i},3]} <- ID:${CharmArray[${i},1]}"
+                        /if (${CMTimer${i}}==0) /call broadcast g "[Kiss] Charm Immune Detected -> ${CharmArray[${i},3]} <- ID:${CharmArray[${i},1]}"
                         /varset CMTimer${i} 1m
                         DEBUGN ${Spawn[${CharmArray[${i},1]}].Name} ID:${CharmArray[${i},1]} is immune, Skip
                         /varset skipFlag 1
@@ -228,16 +234,19 @@
 				/if (${Me.Pet.ID}) {
                     /squelch /pet back off
 					/varset PetActiveState 1
-                    /if (${IAmABard}) /varset PetOn 1
-                    /if (${IAmABard}) /varset PetCombatOn 1
-					/call BroadCast g "*** Charm Sucessfull ***"						
+                    /if (${IAmABard}) {
+                        /varset PetOn 1
+                        /varset PetCombatOn 1
+                        /varset PetAssistAt 98
+                    }                    
+					/call broadcast g "[Kiss] *** Charm Sucessfull ***"						
 					/varset CharmMobDone 1
 					/squelch /pet back off
-					/if (${Select[${CharmKeep},1]}) {
+					|/if (${Select[${CharmKeep},1]}) {
                         /varset CharmPet ${Me.Pet.ID}
                         /echo "Charm Pet ID: ${CharmPet}"
                         /varset CharmPetZone ${Zone.ShortName}
-                    }
+                    |}
                     /if (${IAmABard} && ${CombatStart} && ${Bool[${Target.Charmed}]}) {
                         | /varset MyTargetID ${Int[${Me.GroupAssistTarget.ID}]}
                         /call CombatTargetCheck1 1
@@ -255,9 +264,9 @@
 			/if (!${Me.Pet.ID} && ${CharmKeep}) {
                 /if (${CharmPetZone.Equal[${Zone.ShortName}]} && ${Bool[${Spawn[${CharmPet}].ID}]}) {
 				/varset PetActiveState 0
-				/call BroadCast g "** CHARM FAIL **"
+				/call broadcast g "[Kiss] ** CHARM FAIL **"
 				/if (${Select[${CharmKeep},1]} && ${i}==${XSlotTotal} && ${CharmPetZone.Equal[${Zone.ShortName}]}) {
-					/call BroadCast p "Old pet is Not in Range!"
+					/call broadcast p "[Kiss] Old pet is Not in Range!"
 				|--	/varset CharmPet 0
 				|--	/echo "CharmPetID: ${CharmPet}"
 				}  
@@ -290,10 +299,10 @@
                 }
             }
             /if ((${CharmCount[${TimerNum}]}<1)) {
-                /call BroadCast g "CHARMING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                /call broadcast g "[Kiss] CHARMING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
 				
             } else {
-                /call BroadCast g "ReCHARMING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                /call broadcast g "[Kiss] ReCHARMING-> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                 /varset ReCharm 1
             }
 			| Charm Code
@@ -302,9 +311,9 @@
                     /varcalc CharmFail ${CharmFail}+1
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                         /if (!${ReCharm}) {
-                            /call BroadCast g "JUST CHARMED -> ${CharmSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
+                            /call broadcast g "[Kiss] JUST CHARMED -> ${CharmSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
                         } else {
-                            /call BroadCast g "JUST RECHARMED -> ${CharmSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
+                            /call broadcast g "[Kiss] JUST RECHARMED -> ${CharmSpell} on ${Spawn[${MobID}].CleanName}:${MobID}"
                         }
 						/call PetStateCheck
                         /varcalc CharmCount[${TimerNum}] ${CharmCount[${TimerNum}]}+1
@@ -312,14 +321,14 @@
 												
                         DEBUGN CharmTimer${TimerNum} ${CharmTimer${TimerNum}}
                     } else /if (${Macro.Return.Equal[CAST_RESISTED]} && ${CharmFail}<2) {
-                        /call BroadCast g "CHARM Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+                        /call broadcast g "[Kiss] CHARM Resisted -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         /if (${MezDebuffOnResist} && !${Target.Tashed.ID}) {
                             /while (${Me.SpellInCooldown}) {
                                 /delay 3
                             }
                             /call CastWhat "${MezDebuffSpell}" ${MobID} MezDebuff 0 0
                             /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                                /call BroadCast g "Magic Debuffed -> ${Spawn[${MobID}].CleanName} <- ID:${MobID} : Trying again!"
+                                /call broadcast g "[Kiss] Magic Debuffed -> ${Spawn[${MobID}].CleanName} <- ID:${MobID} : Trying again!"
                                 /while (${Me.SpellInCooldown}) {
                                     /delay 3
                                 }
@@ -327,7 +336,7 @@
                         }
                         /continue
                     } else /if (${Macro.Return.Equal[CAST_IMMUNE]}) {
-						/call BroadCast g "CHARM IMMUNE -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
+						/call broadcast g "[Kiss] CHARM IMMUNE -> ${Spawn[${MobID}].CleanName} <- ID:${MobID}"
                         /if (!${CharmImmuneIDs.Find[|${Target.ID}]}) /call AddCharmImmune ${Target.ID}
                         /if (${AACharmImmune}) /call Bind_AddCharmImmune ${Target.CleanName}
                     } else /if (${Macro.Return.Equal[CAST_CANCELLED]}) {

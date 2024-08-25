@@ -969,7 +969,7 @@
                 /if (!${Pulled} && ${CombatStart} && ${Me.PctHPs}<=${SHealPct} && ${Target.Type.NotEqual[Corpse]} && ${Spawn[${MyTargetID}].ID} && ${Spawn[${MyTargetID}].Distance}<=${SHealRange} && ${Spell${i}GM0}==0) {
                     /call CastWhat "${SHealSpell}" ${Spawn[${MyTargetID}].ID} SingleHeal ${CondNo} 1
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                        /call BroadCast o "${SHealSpell} for  >> ${Me.CleanName} <<"
+                        /call broadcast o "[Kiss] ${SHealSpell} for  >> ${Me.CleanName} <<"
                         /if (${Spell[${SHealSpell}].Duration.TotalSeconds}>0) {
                             /varcalc Spell${i}GM0 ${Spell[${SHealSpell}].MyDuration.TotalSeconds}*10
                         } else /if (${Spell[${SHealSpell}].RecastTime}>0) {
@@ -998,7 +998,7 @@
                     /if (!${HealAgain}) /varset HealAgain 21
                     /call CastWhat "${SHealSpell}" ${MyTargetID} SingleHeal ${CondNo} 1
                     /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                        /call BroadCast o "${SHealSpell} for >>${Spawn[${SHealName} ${SHealType}].CleanName} << cast on ${Spawn[${MyTargetID}].CleanName}"
+                        /call broadcast o "[Kiss] ${SHealSpell} for >>${Spawn[${SHealName} ${SHealType}].CleanName} << cast on ${Spawn[${MyTargetID}].CleanName}"
                         /varset HealAgain 1
                         /return
                     } else /if (${Macro.Return.Equal[CAST_CANCELLED]}) {
@@ -1045,7 +1045,7 @@
                 /call CastWhat "${SHealSpell}" ${SHealThem} SingleHeal ${CondNo} 0
                 DEBUGHEALS SingleHeal \awMR: ${Macro.Return}
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
-                    /call BroadCast o "${SHealSpell} on  >> ${Spawn[${SHealName} ${SHealType}].CleanName} <<"
+                    /call broadcast o "[Kiss] ${SHealSpell} on  >> ${Spawn[${SHealName} ${SHealType}].CleanName} <<"
                     /if (${SHealSpell.Find[Rune]}) {
                         /if (${SHealFlag.Equal[G]}) {
                             /varset Spell${i}GM${WhoNum} 0
@@ -1126,7 +1126,7 @@
                 /call CastWhat "${HealSpell}" ${Me.ID} GroupHeal ${CondNo} 0
                 /if (${Macro.Return.Equal[CAST_SUCCESS]}) {
                     DEBUGHEALS DoGroupHealStuff ${HealSpell} on  >> Group <<
-                    /call BroadCast o "${HealSpell} on  >> Group <<"
+                    /call broadcast o "[Kiss] ${HealSpell} on  >> Group <<"
                     /varcalc SpellGH${j} ${Spell[${HealSpell}].MyDuration.TotalSeconds}*10
                     DEBUGHEALS DoGroupHealStuff Assign Timer:SpellGH${j} ${Spell[${HealSpell}].MyDuration.TotalSeconds} ${SpellGH${j}}
                     /varset HealAgain    1
