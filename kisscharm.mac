@@ -3253,7 +3253,7 @@ Sub LootScoot
                 /for i 1 to ${MobCount}
                     /varset NMob ${NearestSpawn[${i},npc targetable los radius ${CountRadius} zradius 50 noalert 3].ID}
                     /if (${i}>${XSlotTotal}) /break
-                    /if (${NMob} && (${Spawn[${NMob}].Type.Equal[Corpse]} || !${Spawn[${NMob}].ID}) || ${Spawn[${NMob}].Master} || ${Spawn[${NMob}].Type.Equal[Chest]}) {
+                    /if (${NMob} && (${Spawn[${NMob}].Type.Equal[Corpse]} || !${Spawn[${NMob}].ID})) {
                         |/call RemoveFromArray AddsArray ${Select[${NMob},${AddsArray[1,1]},${AddsArray[2,1]},${AddsArray[3,1]},${AddsArray[4,1]},${AddsArray[5,1]},${AddsArray[6,1]},${AddsArray[7,1]},${AddsArray[8,1]},${AddsArray[9,1]},${AddsArray[10,1]},${AddsArray[11,1]},${AddsArray[12,1]},${AddsArray[13,1]}]}
                         /varcalc i_CorpseCount ${i_CorpseCount}+1
                     }
@@ -6563,6 +6563,11 @@ Sub LootScoot
                 /if (!${Defined[CharmMinLevel]}) /declare CharmMinLevel      int         outer   80
                 /if (!${Defined[CharmSpell]}) /declare CharmSpell      string         outer   0
                 /if (!${Defined[CharmKeep]}) /declare CharmKeep 		int			outer 		0
+                /if (${Select[${Me.Class.ShortName},BRD]}) {
+                    /if (!${Defined[PetSuspend]}) /declare PetSuspend       int         outer   0
+                    /if (!${Defined[PetHoldOn]}) /declare PetHoldOn         int         outer   0
+                    /if (!${Defined[PetHold]}) /declare PetHold             string      outer   0
+                }
             }
             | ************************* Merc ****************************************|
             /if (${Select[${command2},all,merc]}) {
